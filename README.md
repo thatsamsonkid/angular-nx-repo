@@ -31,9 +31,7 @@ system would emit pages.
 ## ngx-element
 
 The host does **not** call `customElements.define` for each feature. It
-registers the single `<ngx-element>` loader from
-[ngx-element](https://github.com/thatsamsonkid/ngx-element) and passes the
-aggregated lazy map:
+registers one `<ngx-element>` loader and passes the aggregated lazy map:
 
 ```ts
 provideNgxElement(elementLazyConfig);
@@ -49,11 +47,11 @@ CMS markup:
 </ngx-element>
 ```
 
-`ngx-el` on npm still targets Angular 12 (`ReflectiveInjector`,
-`ComponentFactoryResolver`). The app contains an Angular 22 adapter that keeps
-that same contract: `customElementComponent` on a feature NgModule,
-`loadChildren` in `elementLazyConfig`, and `data-*` attributes mapped onto
-inputs.
+Official [`ngx-el`](https://github.com/thatsamsonkid/ngx-element) is not
+installed yet. A matching Angular publish is pending; until that version is
+available the host uses a local shim with the same contract
+(`customElementComponent`, `loadChildren`, `data-*` inputs). Swap the shim
+for `ngx-el` when the new package version is announced.
 
 ## Shared store
 

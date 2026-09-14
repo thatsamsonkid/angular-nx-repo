@@ -11,6 +11,7 @@ import { NgxElementComponent } from './ngx-element';
 import { NgxElementService } from './ngx-element.service';
 import { LAZY_ELEMENT_CONFIG } from './tokens';
 
+/** Local stand-in for `NgxElementModule.forRoot` until `ngx-el` is published. */
 export function provideNgxElement(
   config: LazyElementDef[],
 ): EnvironmentProviders {

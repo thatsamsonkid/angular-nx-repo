@@ -16,13 +16,9 @@ import { readDataAttributes } from './attribute-utils';
 import { NgxElementService } from './ngx-element.service';
 
 /**
- * Angular 22 adapter for the ngx-element contract
- * (https://github.com/thatsamsonkid/ngx-element).
- *
- * The published `ngx-el` package still targets Angular 12 APIs
- * (`ReflectiveInjector`, `ComponentFactoryResolver`). This host registers
- * one `<ngx-element>` custom element and lazy-loads feature modules from
- * the aggregated library.
+ * Temporary host shim for the ngx-element contract until a current
+ * `ngx-el` package is published. Registers one `<ngx-element>` loader and
+ * lazy-loads feature modules from the aggregated library.
  */
 @Component({
   selector: 'app-ngx-element',
