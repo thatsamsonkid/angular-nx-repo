@@ -1,0 +1,11 @@
+{
+  "name": "@angular-nx-repo/elements",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "^22.1.0",
+    "@angular-nx-repo/feature-banner": "^0.0.1",
+    "@angular-nx-repo/feature-gallery": "^0.0.1",
+    "@angular-nx-repo/shared-store": "^0.0.1"
+  },
+  "sideEffects": false
+}

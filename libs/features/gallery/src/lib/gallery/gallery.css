@@ -1,0 +1,64 @@
+:host {
+  display: block;
+}
+
+.gallery {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.gallery__header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.gallery__title,
+.gallery__meta,
+.gallery__count {
+  margin: 0;
+}
+
+.gallery__title {
+  font-size: 1.6rem;
+}
+
+.gallery__meta,
+.gallery__count,
+.gallery__card-caption,
+.gallery__empty {
+  color: #5b6b7c;
+}
+
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--gallery-columns, 3), minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.gallery__card button {
+  display: grid;
+  gap: 0.4rem;
+  width: 100%;
+  min-height: 8rem;
+  padding: 1.1rem;
+  border: 0;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  text-align: left;
+  cursor: pointer;
+}
+
+.gallery__card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #143c5c;
+}
+
+@media (max-width: 720px) {
+  .gallery__grid {
+    grid-template-columns: 1fr;
+  }
+}

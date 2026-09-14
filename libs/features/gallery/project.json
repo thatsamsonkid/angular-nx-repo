@@ -1,0 +1,34 @@
+{
+  "name": "feature-gallery",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/features/gallery/src",
+  "prefix": "feat",
+  "projectType": "library",
+  "tags": ["type:feature", "scope:gallery"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "project": "libs/features/gallery/ng-package.json",
+        "tsConfig": "libs/features/gallery/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/features/gallery/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      }
+    },
+    "test": {
+      "executor": "@nx/angular:unit-test",
+      "options": {
+        "watch": false
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

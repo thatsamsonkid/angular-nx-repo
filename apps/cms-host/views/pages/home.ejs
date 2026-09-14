@@ -1,0 +1,28 @@
+<%
+  const body = `
+    <section class="cms-page">
+      <p class="cms-kicker">Home</p>
+      <h1>Welcome to the editorial site</h1>
+      <p class="cms-lede">
+        This page is server-rendered by EJS the same way the production CMS
+        would emit markup. Angular only hydrates the tagged regions.
+      </p>
+
+      <ngx-element
+        selector="banner"
+        data-headline="Stories from the ridge line"
+        data-subheadline="A seasonal look at the landscapes and people in this issue."
+        data-cta-label="Open the collection"
+        data-cta-href="/collection"
+        data-theme="dark"
+      ></ngx-element>
+
+      <ngx-element
+        selector="gallery"
+        data-title="Featured frames"
+        data-columns="3"
+        data-items='[{"id":"cedar","title":"Cedar Path","caption":"North woods"},{"id":"harbor","title":"Harbor Light","caption":"Evening tide"},{"id":"meadow","title":"Late Meadow","caption":"Golden hour"}]'
+      ></ngx-element>
+    </section>
+  `;
+%><%- include('../layout', { body, title, nav, cmsState, angularReady, angularHead, angularScripts }) %>

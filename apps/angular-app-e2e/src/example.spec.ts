@@ -1,8 +1,45 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-test('has title', async ({ page }) => {
+test('home page lazy-loads banner and gallery from the CMS markup', async ({
+  page,
+}) => {
   await page.goto('/');
 
-  // Expect h1 to contain a substring.
-  expect(await page.locator('h1').innerText()).toContain('Welcome');
+  await expect(page.locator('h1')).toContainText('Welcome to the editorial site');
+  await expect(page.locator('feat-banner h2')).toContainText(
+    'Stories from the ridge line',
+  );
+  await expect(page.locator('feat-gallery .gallery__card')).toHaveCount(3);
+  await expect(page.locator('.banner__welcome')).toContainText('Alex Rivera');
+});
+
+test('campaign page only mounts the banner feature', async ({ page }) => {
+  await page.goto('/campaign');
+
+  await expect(page.locator('h1')).toContainText('Spring campaign landing');
+  await expect(page.locator('feat-banner h2')).toContainText(
+    'Reserve the spring issue',
+  );
+  await expect(page.locator('feat-gallery')).toHaveCount(0);
+});
+
+test('collection page only mounts the gallery feature', async ({ page }) => {
+  await page.goto('/collection');
+
+  await expect(page.locator('h1')).toContainText('Editorial collection');
+  await expect(page.locator('feat-gallery .gallery__card')).toHaveCount(4);
+  await expect(page.locator('feat-banner')).toHaveCount(0);
+});
+
+test('article page hydrates mixed islands and anonymous CMS state', async ({
+  page,
+}) => {
+  await page.goto('/article');
+
+  await expect(page.locator('feat-banner h2')).toContainText(
+    'Read the full dispatch',
+  );
+  await expect(page.locator('feat-gallery .gallery__card')).toHaveCount(3);
+  await expect(page.locator('.banner__welcome')).toHaveCount(0);
+  await expect(page.locator('.banner__eyebrow')).toContainText('fr');
 });

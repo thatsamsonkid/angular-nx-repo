@@ -8,6 +8,17 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
   <body>
-    <app-root></app-root>
+    <!--
+      Pages are served by the EJS CMS host (apps/cms-host), not Angular Router.
+      This file is only the Angular bundle shell plus a fallback demo when
+      `nx serve angular-app` is used directly.
+    -->
+    <ngx-element
+      selector="banner"
+      data-headline="Bundle fallback"
+      data-subheadline="Prefer nx serve cms-host for multi-page CMS views."
+      data-cta-label="Open collection"
+      data-cta-href="/collection"
+    ></ngx-element>
   </body>
 </html>

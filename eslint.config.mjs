@@ -17,8 +17,20 @@ export default [
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
           depConstraints: [
             {
-              sourceTag: '*',
-              onlyDependOnLibsWithTags: ['*'],
+              sourceTag: 'type:app',
+              onlyDependOnLibsWithTags: ['type:publishable'],
+            },
+            {
+              sourceTag: 'type:publishable',
+              onlyDependOnLibsWithTags: ['type:feature', 'type:state'],
+            },
+            {
+              sourceTag: 'type:feature',
+              onlyDependOnLibsWithTags: ['type:state'],
+            },
+            {
+              sourceTag: 'type:state',
+              onlyDependOnLibsWithTags: ['type:state'],
             },
           ],
         },

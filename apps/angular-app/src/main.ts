@@ -1,5 +1,9 @@
-import { bootstrapApplication } from '@angular/platform-browser';
+import { createApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
-import { App } from './app/app';
+import { hydrateCmsState } from './app/hydrate-cms-state';
 
-bootstrapApplication(App, appConfig).catch((err) => console.error(err));
+createApplication(appConfig)
+  .then((appRef) => {
+    hydrateCmsState(appRef.injector);
+  })
+  .catch((error) => console.error(error));

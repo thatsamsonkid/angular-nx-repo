@@ -1,0 +1,10 @@
+{
+  "name": "@angular-nx-repo/shared-store",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "^22.1.0",
+    "@ngrx/store": "^22.0.0"
+  },
+  "sideEffects": false,
+  "private": true
+}

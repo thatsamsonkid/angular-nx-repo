@@ -1,0 +1,10 @@
+{
+  "name": "@angular-nx-repo/feature-banner",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "^22.1.0",
+    "@angular-nx-repo/shared-store": "^0.0.1"
+  },
+  "sideEffects": false,
+  "private": true
+}

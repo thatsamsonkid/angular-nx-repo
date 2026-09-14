@@ -4,7 +4,7 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/angular-app/src",
-  "tags": [],
+  "tags": ["type:app", "scope:host"],
   "targets": {
     "build": {
       "executor": "@angular/build:application",
@@ -49,6 +49,9 @@
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
+      "options": {
+        "port": 4300
+      },
       "configurations": {
         "production": {
           "buildTarget": "angular-app:build:production"
@@ -72,9 +75,9 @@
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "angular-app:build",
-        "port": 4200,
+        "port": 4301,
         "staticFilePath": "dist/apps/angular-app/browser",
-        "spa": true
+        "spa": false
       }
     }
   }
