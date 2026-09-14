@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+} from '@angular/core';
 import { CmsFacade } from '@angular-nx-repo/shared-store';
 
 @Component({
@@ -10,13 +17,13 @@ import { CmsFacade } from '@angular-nx-repo/shared-store';
 export class Banner {
   private readonly cms = inject(CmsFacade);
 
-  readonly headline = input('');
-  readonly subheadline = input('');
-  readonly ctaLabel = input('');
-  readonly ctaHref = input('#');
-  readonly theme = input<'light' | 'dark'>('light');
+  @Input() headline = '';
+  @Input() subheadline = '';
+  @Input() ctaLabel = '';
+  @Input() ctaHref = '#';
+  @Input() theme: 'light' | 'dark' = 'light';
 
-  readonly ctaClick = output<{ headline: string }>();
+  @Output() readonly ctaClick = new EventEmitter<{ headline: string }>();
 
   readonly user = this.cms.user;
   readonly locale = this.cms.locale;
@@ -24,6 +31,6 @@ export class Banner {
 
   onCta(event: Event): void {
     event.preventDefault();
-    this.ctaClick.emit({ headline: this.headline() });
+    this.ctaClick.emit({ headline: this.headline });
   }
 }

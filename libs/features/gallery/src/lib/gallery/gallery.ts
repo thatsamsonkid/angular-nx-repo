@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
+  EventEmitter,
+  Input,
+  Output,
   inject,
-  input,
-  output,
 } from '@angular/core';
 import { CmsFacade } from '@angular-nx-repo/shared-store';
 
@@ -24,28 +24,27 @@ export interface GalleryItem {
 export class Gallery {
   private readonly cms = inject(CmsFacade);
 
-  readonly title = input('Gallery');
-  readonly columns = input('3');
-  readonly items = input<string | GalleryItem[]>('[]');
+  @Input() title = 'Gallery';
+  @Input() columns = '3';
+  @Input() items: string | GalleryItem[] = '[]';
 
-  readonly itemSelect = output<GalleryItem>();
+  @Output() readonly itemSelect = new EventEmitter<GalleryItem>();
 
   readonly locale = this.cms.locale;
   readonly page = this.cms.page;
 
-  readonly parsedItems = computed<GalleryItem[]>(() => {
-    const value = this.items();
-    if (Array.isArray(value)) {
-      return value;
+  get parsedItems(): GalleryItem[] {
+    if (Array.isArray(this.items)) {
+      return this.items;
     }
 
     try {
-      const parsed = JSON.parse(value) as unknown;
+      const parsed = JSON.parse(this.items) as unknown;
       return Array.isArray(parsed) ? (parsed as GalleryItem[]) : [];
     } catch {
       return [];
     }
-  });
+  }
 
   selectItem(item: GalleryItem): void {
     this.itemSelect.emit(item);

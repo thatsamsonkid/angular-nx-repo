@@ -1,16 +1,16 @@
 <section class="gallery">
   <header class="gallery__header">
     <div>
-      <h2 class="gallery__title">{{ title() }}</h2>
+      <h2 class="gallery__title">{{ title }}</h2>
       @if (page(); as currentPage) {
         <p class="gallery__meta">{{ currentPage.title }} · {{ locale() }}</p>
       }
     </div>
-    <p class="gallery__count">{{ parsedItems().length }} items</p>
+    <p class="gallery__count">{{ parsedItems.length }} items</p>
   </header>
 
-  <div class="gallery__grid" [style.--gallery-columns]="columns()">
-    @for (item of parsedItems(); track item.id) {
+  <div class="gallery__grid" [style.--gallery-columns]="columns">
+    @for (item of parsedItems; track item.id) {
       <article class="gallery__card">
         <button type="button" (click)="selectItem(item)">
           <span class="gallery__card-title">{{ item.title }}</span>

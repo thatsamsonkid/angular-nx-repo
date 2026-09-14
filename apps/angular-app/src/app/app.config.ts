@@ -3,7 +3,7 @@ import {
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { elementLazyConfig, provideElements } from '@angular-nx-repo/elements';
-import { provideNgxElement } from './ngx-element/provide-ngx-element';
+import { provideNgxElement } from 'ngx-el';
 
 export const appConfig: ApplicationConfig = {
   providers: [

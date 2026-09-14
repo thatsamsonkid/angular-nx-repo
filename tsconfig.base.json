@@ -28,7 +28,8 @@
       ],
       "@angular-nx-repo/elements/gallery": [
         "./libs/elements/gallery/src/index.ts"
-      ]
+      ],
+      "ngx-el": ["./node_modules/ngx-el/src/public-api.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
