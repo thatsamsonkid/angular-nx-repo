@@ -7,7 +7,6 @@ export const cmsReducer = createReducer(
   on(cmsActions.hydrate, (state, { state: incoming }): CmsState => ({
     ...state,
     ...incoming,
-    user: incoming.user === undefined ? state.user : incoming.user,
     page: incoming.page === undefined ? state.page : incoming.page,
   })),
   on(
@@ -15,20 +14,6 @@ export const cmsReducer = createReducer(
     (state, { locale }): CmsState => ({
       ...state,
       locale,
-    }),
-  ),
-  on(
-    cmsActions.setUser,
-    (state, { user }): CmsState => ({
-      ...state,
-      user,
-    }),
-  ),
-  on(
-    cmsActions.clearUser,
-    (state): CmsState => ({
-      ...state,
-      user: null,
     }),
   ),
   on(

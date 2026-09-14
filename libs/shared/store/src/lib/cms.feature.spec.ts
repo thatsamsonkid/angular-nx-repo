@@ -3,7 +3,7 @@ import { cmsReducer } from './cms.feature';
 import { initialCmsState } from './cms-state.model';
 
 describe('cmsReducer', () => {
-  it('starts with an anonymous English session', () => {
+  it('starts with English page context and no page', () => {
     expect(cmsReducer(undefined, { type: '[Init]' })).toEqual(initialCmsState);
   });
 
@@ -20,16 +20,6 @@ describe('cmsReducer', () => {
 
     expect(next.locale).toBe('fr');
     expect(next.page?.id).toBe('home');
-    expect(next.user).toBeNull();
-  });
-
-  it('sets and clears the signed-in user', () => {
-    const user = { id: 'u1', name: 'Alex Rivera', authenticated: true };
-    const signedIn = cmsReducer(initialCmsState, cmsActions.setUser({ user }));
-    expect(signedIn.user).toEqual(user);
-
-    const signedOut = cmsReducer(signedIn, cmsActions.clearUser());
-    expect(signedOut.user).toBeNull();
   });
 
   it('updates locale and page context independently', () => {

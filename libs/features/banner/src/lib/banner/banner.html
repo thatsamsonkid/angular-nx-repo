@@ -6,7 +6,7 @@
   @if (subheadline) {
     <p class="banner__subheadline">{{ subheadline }}</p>
   }
-  @if (user(); as currentUser) {
+  @if (profile(); as currentUser) {
     <p class="banner__welcome">Hello, {{ currentUser.name }}</p>
   }
   @if (ctaLabel) {

@@ -50,7 +50,6 @@ const pages = {
     nav: 'home',
     cmsState: {
       locale: 'en',
-      user: { id: 'u1', name: 'Alex Rivera', authenticated: true },
       page: { id: 'home', title: 'Home', path: '/' },
     },
   },
@@ -61,7 +60,6 @@ const pages = {
     nav: 'campaign',
     cmsState: {
       locale: 'en',
-      user: { id: 'u1', name: 'Alex Rivera', authenticated: true },
       page: { id: 'campaign', title: 'Spring Campaign', path: '/campaign' },
     },
   },
@@ -72,7 +70,6 @@ const pages = {
     nav: 'collection',
     cmsState: {
       locale: 'en',
-      user: { id: 'u1', name: 'Alex Rivera', authenticated: true },
       page: { id: 'collection', title: 'Editorial Collection', path: '/collection' },
     },
   },
@@ -83,7 +80,6 @@ const pages = {
     nav: 'article',
     cmsState: {
       locale: 'fr',
-      user: null,
       page: { id: 'article', title: 'Field Notes', path: '/article' },
     },
   },

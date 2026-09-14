@@ -1,9 +1,3 @@
-export interface CmsUser {
-  id: string;
-  name: string;
-  authenticated: boolean;
-}
-
 export interface CmsPage {
   id: string;
   title: string;
@@ -12,7 +6,6 @@ export interface CmsPage {
 
 export interface CmsState {
   locale: string;
-  user: CmsUser | null;
   page: CmsPage | null;
 }
 
@@ -20,7 +13,6 @@ export type CmsBootstrapState = Partial<CmsState>;
 
 export const initialCmsState: CmsState = {
   locale: 'en',
-  user: null,
   page: null,
 };
 
