@@ -1,0 +1,17 @@
+<section class="banner" [attr.data-theme]="theme()">
+  @if (page(); as currentPage) {
+    <p class="banner__eyebrow">{{ currentPage.title }} · {{ locale() }}</p>
+  }
+  <h2 class="banner__headline">{{ headline() }}</h2>
+  @if (subheadline()) {
+    <p class="banner__subheadline">{{ subheadline() }}</p>
+  }
+  @if (user(); as currentUser) {
+    <p class="banner__welcome">Hello, {{ currentUser.name }}</p>
+  }
+  @if (ctaLabel()) {
+    <a class="banner__cta" [href]="ctaHref()" (click)="onCta($event)">
+      {{ ctaLabel() }}
+    </a>
+  }
+</section>

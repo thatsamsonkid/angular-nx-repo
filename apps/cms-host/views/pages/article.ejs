@@ -1,0 +1,36 @@
+<%
+  const body = `
+    <section class="cms-page">
+      <p class="cms-kicker">Article</p>
+      <h1>Field notes from the estuary</h1>
+      <p class="cms-lede">
+        Mixed CMS content: prose from the template plus two lazy Angular
+        islands. This page hydrates an anonymous French session.
+      </p>
+
+      <article class="cms-prose">
+        <p>
+          The tide tables were posted on the hut door before sunrise. We
+          followed the boardwalk until the fog thinned and the first heron
+          lifted off the grass.
+        </p>
+      </article>
+
+      <ngx-element
+        selector="banner"
+        data-headline="Read the full dispatch"
+        data-subheadline="This island is rendered only because the CMS placed an ngx-element tag."
+        data-cta-label="Back to home"
+        data-cta-href="/"
+        data-theme="light"
+      ></ngx-element>
+
+      <ngx-element
+        selector="gallery"
+        data-title="Plates from the walk"
+        data-columns="3"
+        data-items='[{"id":"fog","title":"Boardwalk Fog","caption":"05:40"},{"id":"heron","title":"First Heron","caption":"05:52"},{"id":"hut","title":"Tide Hut","caption":"06:10"}]'
+      ></ngx-element>
+    </section>
+  `;
+%><%- include('../layout', { body, title, nav, cmsState, angularReady, angularHead, angularScripts }) %>

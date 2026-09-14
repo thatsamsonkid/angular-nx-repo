@@ -31,7 +31,7 @@ export default defineConfig({
   },
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npx nx run angular-app:serve',
+    command: 'npx nx run cms-host:serve-static',
     url: 'http://localhost:4200',
     reuseExistingServer: true,
     cwd: workspaceRoot,

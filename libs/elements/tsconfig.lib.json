@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "types": []
+  },
+  "include": ["src/**/*.ts", "banner/src/**/*.ts", "gallery/src/**/*.ts"],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "banner/src/**/*.spec.ts",
+    "banner/src/**/*.test.ts",
+    "gallery/src/**/*.spec.ts",
+    "gallery/src/**/*.test.ts"
+  ]
+}

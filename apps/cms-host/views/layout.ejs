@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= title %> · CMS Host</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/cms-assets/cms.css" />
+    <%- angularHead %>
+  </head>
+  <body>
+    <div class="cms-shell">
+      <header class="cms-header">
+        <a class="cms-brand" href="/">Northline CMS</a>
+        <nav class="cms-nav">
+          <a href="/" class="<%= nav === 'home' ? 'is-active' : '' %>">Home</a>
+          <a href="/campaign" class="<%= nav === 'campaign' ? 'is-active' : '' %>">Campaign</a>
+          <a href="/collection" class="<%= nav === 'collection' ? 'is-active' : '' %>">Collection</a>
+          <a href="/article" class="<%= nav === 'article' ? 'is-active' : '' %>">Article</a>
+        </nav>
+      </header>
+
+      <main class="cms-main">
+        <% if (!angularReady) { %>
+          <p class="cms-building">Angular bundle is still building. Refresh in a moment.</p>
+        <% } %>
+        <%- body %>
+      </main>
+
+      <footer class="cms-footer">
+        Local EJS stand-in for the external multi-page CMS. No Angular Router.
+      </footer>
+    </div>
+
+    <script>
+      window.__CMS_STATE__ = <%- JSON.stringify(cmsState) %>;
+    </script>
+    <%- angularScripts %>
+  </body>
+</html>

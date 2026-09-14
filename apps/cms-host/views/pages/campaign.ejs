@@ -1,0 +1,21 @@
+<%
+  const body = `
+    <section class="cms-page">
+      <p class="cms-kicker">Campaign</p>
+      <h1>Spring campaign landing</h1>
+      <p class="cms-lede">
+        A campaign template that only asks the host to lazy-load the banner
+        feature through ngx-element.
+      </p>
+
+      <ngx-element
+        selector="banner"
+        data-headline="Reserve the spring issue"
+        data-subheadline="Members can preview the campaign before the public drop."
+        data-cta-label="Join the list"
+        data-cta-href="/article"
+        data-theme="dark"
+      ></ngx-element>
+    </section>
+  `;
+%><%- include('../layout', { body, title, nav, cmsState, angularReady, angularHead, angularScripts }) %>

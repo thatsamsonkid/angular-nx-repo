@@ -14,7 +14,22 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": false,
-    "paths": {}
+    "paths": {
+      "@angular-nx-repo/shared-store": ["./libs/shared/store/src/index.ts"],
+      "@angular-nx-repo/feature-banner": [
+        "./libs/features/banner/src/index.ts"
+      ],
+      "@angular-nx-repo/feature-gallery": [
+        "./libs/features/gallery/src/index.ts"
+      ],
+      "@angular-nx-repo/elements": ["./libs/elements/src/index.ts"],
+      "@angular-nx-repo/elements/banner": [
+        "./libs/elements/banner/src/index.ts"
+      ],
+      "@angular-nx-repo/elements/gallery": [
+        "./libs/elements/gallery/src/index.ts"
+      ]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

@@ -1,0 +1,19 @@
+<%
+  const body = `
+    <section class="cms-page">
+      <p class="cms-kicker">Collection</p>
+      <h1>Editorial collection</h1>
+      <p class="cms-lede">
+        Gallery-only CMS view. The Angular host never routes here; the server
+        selected this template.
+      </p>
+
+      <ngx-element
+        selector="gallery"
+        data-title="From the archive"
+        data-columns="2"
+        data-items='[{"id":"bridge","title":"Iron Bridge","caption":"River crossing"},{"id":"studio","title":"Studio Window","caption":"Afternoon still"},{"id":"quay","title":"Old Quay","caption":"Low tide"},{"id":"orchard","title":"Orchard Wall","caption":"After rain"}]'
+      ></ngx-element>
+    </section>
+  `;
+%><%- include('../layout', { body, title, nav, cmsState, angularReady, angularHead, angularScripts }) %>

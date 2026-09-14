@@ -1,0 +1,107 @@
+:root {
+  color: #143c5c;
+  background: #eef3f7;
+  font-family:
+    Inter,
+    Segoe UI,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+.cms-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.cms-header,
+.cms-footer,
+.cms-main {
+  width: min(1080px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.cms-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 0;
+}
+
+.cms-brand {
+  color: inherit;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.cms-nav {
+  display: flex;
+  gap: 0.9rem;
+}
+
+.cms-nav a {
+  color: #4b6072;
+  text-decoration: none;
+}
+
+.cms-nav a.is-active {
+  color: #143c5c;
+  font-weight: 700;
+}
+
+.cms-main {
+  padding: 0.5rem 0 3rem;
+}
+
+.cms-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.cms-kicker {
+  margin: 0;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #5b6b7c;
+}
+
+.cms-page h1,
+.cms-lede,
+.cms-prose p,
+.cms-building,
+.cms-footer {
+  margin: 0;
+}
+
+.cms-lede,
+.cms-prose,
+.cms-footer,
+.cms-building {
+  color: #4b6072;
+  line-height: 1.6;
+}
+
+.cms-footer {
+  padding: 1.5rem 0 2rem;
+  font-size: 0.9rem;
+}
+
+.cms-building {
+  padding: 0.8rem 1rem;
+  border-radius: 0.75rem;
+  background: #fff3cd;
+  color: #6b5300;
+}

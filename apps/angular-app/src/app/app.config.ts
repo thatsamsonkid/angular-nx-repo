@@ -2,9 +2,13 @@ import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { appRoutes } from './app.routes';
+import { elementLazyConfig, provideElements } from '@angular-nx-repo/elements';
+import { provideNgxElement } from './ngx-element/provide-ngx-element';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideBrowserGlobalErrorListeners(), provideRouter(appRoutes)],
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideElements(),
+    provideNgxElement(elementLazyConfig),
+  ],
 };
