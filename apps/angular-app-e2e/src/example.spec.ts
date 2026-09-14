@@ -10,7 +10,7 @@ test('home page lazy-loads banner and gallery from the CMS markup', async ({
     'Stories from the ridge line',
   );
   await expect(page.locator('feat-gallery .gallery__card')).toHaveCount(3);
-  await expect(page.locator('.banner__welcome')).toContainText('Alex Rivera');
+  await expect(page.locator('.banner__welcome')).toHaveCount(0);
 });
 
 test('campaign page only mounts the banner feature', async ({ page }) => {
@@ -31,7 +31,7 @@ test('collection page only mounts the gallery feature', async ({ page }) => {
   await expect(page.locator('feat-banner')).toHaveCount(0);
 });
 
-test('article page hydrates mixed islands and anonymous CMS state', async ({
+test('article page hydrates mixed islands without a signed-in session', async ({
   page,
 }) => {
   await page.goto('/article');
@@ -42,4 +42,24 @@ test('article page hydrates mixed islands and anonymous CMS state', async ({
   await expect(page.locator('feat-gallery .gallery__card')).toHaveCount(3);
   await expect(page.locator('.banner__welcome')).toHaveCount(0);
   await expect(page.locator('.banner__eyebrow')).toContainText('fr');
+});
+
+test('CMS sign-in events populate auth and loadSession restores it', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.locator('feat-banner')).toBeVisible();
+  await expect(page.locator('.banner__welcome')).toHaveCount(0);
+
+  await page.getByTestId('cms-signin').click();
+  await expect(page.locator('.banner__welcome')).toContainText('Alex Rivera');
+
+  await page.goto('/campaign');
+  await expect(page.locator('.banner__welcome')).toContainText('Alex Rivera');
+
+  await page.getByTestId('cms-signout').click();
+  await expect(page.locator('.banner__welcome')).toHaveCount(0);
+
+  await page.goto('/');
+  await expect(page.locator('.banner__welcome')).toHaveCount(0);
 });

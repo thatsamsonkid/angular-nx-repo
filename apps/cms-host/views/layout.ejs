@@ -18,6 +18,10 @@
           <a href="/collection" class="<%= nav === 'collection' ? 'is-active' : '' %>">Collection</a>
           <a href="/article" class="<%= nav === 'article' ? 'is-active' : '' %>">Article</a>
         </nav>
+        <div class="cms-auth">
+          <button type="button" id="cms-signin" data-testid="cms-signin">Sign in</button>
+          <button type="button" id="cms-signout" data-testid="cms-signout">Sign out</button>
+        </div>
       </header>
 
       <main class="cms-main">
@@ -35,6 +39,7 @@
     <script>
       window.__CMS_STATE__ = <%- JSON.stringify(cmsState) %>;
     </script>
+    <script src="/cms-assets/cms-auth.js"></script>
     <%- angularScripts %>
   </body>
 </html>

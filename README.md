@@ -23,7 +23,7 @@ CMS / EJS page
 | `libs/elements` | Publishable | Only package the host consumes. Re-exports features, lazy config, and store registration. |
 | `libs/features/banner` | Buildable | Banner feature + `BannerElementModule.customElementComponent`. |
 | `libs/features/gallery` | Buildable | Gallery feature + `GalleryElementModule.customElementComponent`. |
-| `libs/shared/store` | Buildable | Shared NgRx CMS session (locale, user, page). |
+| `libs/shared/store` | Buildable | Shared NgRx store (page context + auth session). |
 
 The production CMS lives in another repository. `cms-host` only mimics how that
 system would emit pages.
@@ -61,8 +61,12 @@ Feature libraries inject `CmsFacade` from the shared store. Register it once:
 - **Preferred:** `provideElements()` from `@angular-nx-repo/elements`
 - **Alternative:** `provideSharedStore()` from `@angular-nx-repo/shared-store` in the Angular app
 
-The EJS host can seed state with `window.__CMS_STATE__` before the Angular
-bundle runs.
+Page context (locale, current page) can be seeded with `window.__CMS_STATE__`.
+
+Auth is not a page-level web component. The host dispatches `loadSession` on
+boot, reads the Angular-owned `sessionStorage` key, and listens for CMS
+vanilla events `cms:signin` / `cms:logout`. Sign-in writes profile + token
+into that same storage so the next document load can restore the slice.
 
 ## Commands
 
