@@ -1,8 +1,9 @@
 import { LazyElementDef } from './element-types';
 
 /**
- * Single export the host app passes to ngx-element. The app does not
- * register individual web components or feature modules itself.
+ * Compile-time lazy map used by tests and as the pre-federation pattern.
+ * The host (`angular-app`) does not consume this file: banner loads via
+ * Native Federation and gallery is inlined in createHostElementLazyConfig.
  */
 export const elementLazyConfig: LazyElementDef[] = [
   {

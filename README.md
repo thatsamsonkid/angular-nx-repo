@@ -18,8 +18,9 @@ CMS / EJS page
 
 | Project | Kind | Role |
 | --- | --- | --- |
+| `apps/banner` | Native Federation **remote** | Reference slow-roll: exposes `BannerElementModule`. Served from `/remotes/banner`. |
 | `apps/cms-host` | Express + EJS | Local stand-in for the external CMS. Renders multi-page views and places `<ngx-element>` tags. |
-| `apps/angular-app` | Angular host | Bootstraps ngx-element and the global store. No router, no page components. |
+| `apps/angular-app` | Angular **host** | Bootstraps ngx-element and the global store. Loads banner via federation; gallery still ships in this bundle. |
 | `libs/elements` | Publishable | Only package the host consumes. Re-exports features, lazy config, and store registration. |
 | `libs/features/banner` | Buildable | Banner feature + `BannerElementModule.customElementComponent`. |
 | `libs/features/gallery` | Buildable | Gallery feature + `GalleryElementModule.customElementComponent`. |
@@ -32,16 +33,9 @@ not a mirrored copy of the Angular sources.
 
 ## ngx-element
 
-The host does **not** call `customElements.define` for each feature. It
-registers the single `<ngx-element>` loader from
-[`ngx-el`](https://github.com/thatsamsonkid/ngx-element) and passes the
-aggregated lazy map:
-
-```ts
-import { provideNgxElement } from 'ngx-el';
-
-provideNgxElement(elementLazyConfig);
-```
+The host registers `<ngx-element>` and a mixed lazy map: **banner** is
+`loadRemoteModule('banner', './Module')`; **gallery** is still a compile-time
+`import()`. See [tools/federation/README.md](tools/federation/README.md).
 
 CMS markup:
 
@@ -73,8 +67,9 @@ into that same storage so the next document load can restore the slice.
 ## Commands
 
 ```sh
-npm run serve          # EJS CMS host + watched Angular bundle (port 4200)
+npm run serve          # EJS CMS host + watched host + watched banner remote (port 4200)
 npm run serve:app      # Angular-only fallback (port 4300)
+npm run serve:banner   # Optional live banner remote (port 4201)
 npm run package:cms    # Production Angular dist + AEM clientlib zip
 npx nx build elements  # Build the publishable aggregator
 npx nx test feature-banner
@@ -87,6 +82,10 @@ CMS Maven module should delete `.../clientlibs/angular-app` and unpack
 `dist/cms/angular-app-<version>.zip` there. It should not compile this
 Angular app or run Node.
 
-Adding a feature later: create another buildable library, expose an NgModule
-with `customElementComponent`, add a secondary entry on `elements`, and append
-one row to `elementLazyConfig`. The Angular app does not change.
+Adding a feature later (pre-federation path): create another buildable library,
+expose an NgModule with `customElementComponent`, add a secondary entry on
+`elements`, and append one row to `elementLazyConfig`.
+
+To slow-roll the next island the way banner works, add it to a remote's
+`exposes` map (or a new remote) and load it with `loadRemoteModule`. Do not
+add a `nx serve` per island; `cms-host` can keep serving built `dist/` files.

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.app.json",
+  "files": [
+    "../../libs/shared/store/src/index.ts",
+    "../../libs/elements/banner/src/index.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ]
+}
