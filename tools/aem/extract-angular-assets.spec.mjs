@@ -77,6 +77,32 @@ describe('extract-angular-assets', () => {
     );
   });
 
+  it('keeps one stylesheet when Angular emits print/onload plus noscript fallback', () => {
+    const html = `<head>
+      <link rel="stylesheet" href="styles-abc123.css" media="print" onload="this.media='all'">
+      <noscript><link rel="stylesheet" href="styles-abc123.css"></noscript>
+    </head>
+    <body>
+      <link rel="modulepreload" href="chunk-banner-def456.js">
+      <script src="main-bbb222.js" type="module"></script>
+    </body>`;
+    const resourceBase = clientlibResourceBase(config);
+    const includes = buildAemIncludes(html, resourceBase);
+    const stylesheetCount = includes.head.split('rel="stylesheet"').length - 1;
+    assert.equal(stylesheetCount, 1);
+    assert.match(includes.head, /media="print"/);
+    assert.match(includes.head, /chunk-banner-def456\.js/);
+    const manifest = buildManifest({
+      name: 'angular-app',
+      version: '0.0.0',
+      gitSha: 'abc',
+      resourceBase,
+      config,
+      html,
+    });
+    assert.deepEqual(manifest.files.styles, ['styles-abc123.css']);
+  });
+
   it('records hashed files in the Maven-facing manifest', () => {
     const manifest = buildManifest({
       name: 'angular-app',

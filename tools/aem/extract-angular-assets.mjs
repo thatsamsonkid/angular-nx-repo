@@ -64,10 +64,28 @@ export function rewriteTagUrls(tag, resourceBase) {
   );
 }
 
+export function uniqueBy(items, keyFn) {
+  const seen = new Set();
+  const unique = [];
+  for (const item of items) {
+    const key = keyFn(item);
+    if (!key || seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    unique.push(item);
+  }
+  return unique;
+}
+
 export function buildAemIncludes(html, resourceBase) {
   const { links, scripts } = parseAngularIndexHtml(html);
-  const head = links
-    .filter((tag) => isStylesheet(tag) || isModulepreload(tag))
+  const styles = uniqueBy(links.filter(isStylesheet), (tag) => readAttr(tag, 'href'));
+  const preloads = uniqueBy(
+    links.filter(isModulepreload),
+    (tag) => readAttr(tag, 'href'),
+  );
+  const head = [...styles, ...preloads]
     .map((tag) => rewriteTagUrls(tag, resourceBase))
     .join('\n');
   const body = scripts
@@ -97,20 +115,23 @@ export function buildManifest({
       jcrRootAppsPath: config.jcrRootAppsPath,
     },
     files: {
-      styles: links
-        .filter(isStylesheet)
-        .map((tag) => readAttr(tag, 'href'))
-        .filter(Boolean),
-      modulepreload: links
-        .filter(isModulepreload)
-        .map((tag) => readAttr(tag, 'href'))
-        .filter(Boolean),
-      scripts: scripts
-        .map((tag) => ({
-          src: readAttr(tag, 'src'),
-          type: readAttr(tag, 'type'),
-        }))
-        .filter((script) => script.src),
+      styles: uniqueBy(
+        links.filter(isStylesheet).map((tag) => readAttr(tag, 'href')),
+        (href) => href,
+      ),
+      modulepreload: uniqueBy(
+        links.filter(isModulepreload).map((tag) => readAttr(tag, 'href')),
+        (href) => href,
+      ),
+      scripts: uniqueBy(
+        scripts
+          .map((tag) => ({
+            src: readAttr(tag, 'src'),
+            type: readAttr(tag, 'type'),
+          }))
+          .filter((script) => script.src),
+        (script) => script.src,
+      ),
     },
   };
 }
