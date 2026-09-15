@@ -4,13 +4,14 @@
   "projectType": "application",
   "sourceRoot": "apps/cms-host/src",
   "tags": ["type:app", "scope:cms"],
-  "implicitDependencies": ["angular-app"],
+  "implicitDependencies": ["angular-app", "banner"],
   "targets": {
     "serve": {
       "continuous": true,
       "executor": "nx:run-commands",
       "options": {
         "commands": [
+          "npx nx build banner --configuration=development --watch",
           "npx nx build angular-app --configuration=development --watch",
           "node --watch apps/cms-host/src/server.mjs"
         ],
@@ -21,6 +22,10 @@
       "continuous": true,
       "executor": "nx:run-commands",
       "dependsOn": [
+        {
+          "projects": ["banner"],
+          "target": "build"
+        },
         {
           "projects": ["angular-app"],
           "target": "build"

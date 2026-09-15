@@ -1,61 +1,53 @@
 {
-  "name": "angular-app",
+  "name": "banner",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "prefix": "app",
-  "sourceRoot": "apps/angular-app/src",
+  "prefix": "feat",
+  "sourceRoot": "apps/banner/src",
   "tags": [
     "type:app",
-    "scope:host"
+    "scope:banner"
   ],
   "targets": {
     "build": {
       "executor": "@angular-architects/native-federation:build",
+      "defaultConfiguration": "production",
       "options": {
         "cacheExternalArtifacts": true,
-        "tsConfig": "apps/angular-app/tsconfig.federation.json"
+        "tsConfig": "apps/banner/tsconfig.federation.json"
       },
       "configurations": {
         "production": {
-          "target": "angular-app:esbuild:production"
+          "target": "banner:esbuild:production"
         },
         "development": {
-          "target": "angular-app:esbuild:development",
+          "target": "banner:esbuild:development",
           "dev": true
         }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "serve": {
       "executor": "@angular-architects/native-federation:build",
       "options": {
-        "target": "angular-app:serve-original:development",
-        "tsConfig": "apps/angular-app/tsconfig.federation.json",
+        "target": "banner:serve-original:development",
+        "tsConfig": "apps/banner/tsconfig.federation.json",
         "rebuildDelay": 500,
         "cacheExternalArtifacts": true,
         "dev": true,
         "devServer": true,
-        "port": 0
+        "port": 4201
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint"
     },
-    "test": {
-      "executor": "@angular/build:unit-test",
-      "options": {
-        "watch": false,
-        "buildTarget": "angular-app:esbuild"
-      }
-    },
     "serve-static": {
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "angular-app:build",
-        "port": 4301,
-        "staticFilePath": "dist/apps/angular-app/browser",
-        "spa": false
+        "buildTarget": "banner:build",
+        "staticFilePath": "dist/apps/banner/browser",
+        "spa": true
       }
     },
     "esbuild": {
@@ -65,17 +57,17 @@
       ],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/angular-app",
-        "browser": "apps/angular-app/src/main.ts",
-        "tsConfig": "apps/angular-app/tsconfig.app.json",
+        "outputPath": "dist/apps/banner",
+        "browser": "apps/banner/src/main.ts",
+        "tsConfig": "apps/banner/tsconfig.app.json",
         "assets": [
           {
             "glob": "**/*",
-            "input": "apps/angular-app/public"
+            "input": "apps/banner/public"
           }
         ],
         "styles": [
-          "apps/angular-app/src/styles.css"
+          "apps/banner/src/styles.css"
         ],
         "polyfills": [
           "es-module-shims"
@@ -109,14 +101,14 @@
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "port": 4300
+        "port": 4201
       },
       "configurations": {
         "production": {
-          "buildTarget": "angular-app:esbuild:production"
+          "buildTarget": "banner:esbuild:production"
         },
         "development": {
-          "buildTarget": "angular-app:esbuild:development"
+          "buildTarget": "banner:esbuild:development"
         }
       }
     }

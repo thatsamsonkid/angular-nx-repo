@@ -3,7 +3,14 @@ import { expect, test } from '@playwright/test';
 test('home page lazy-loads banner and gallery from the CMS markup', async ({
   page,
 }) => {
+  const bannerRemote = page.waitForResponse(
+    (response) =>
+      response.url().includes('/remotes/banner/remoteEntry.json') &&
+      response.ok(),
+  );
+
   await page.goto('/');
+  await bannerRemote;
 
   await expect(page.locator('h1')).toContainText('Welcome to the editorial site');
   await expect(page.locator('feat-banner h2')).toContainText(

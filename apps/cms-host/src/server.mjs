@@ -8,6 +8,7 @@ const workspaceRoot = path.resolve(__dirname, '../../..');
 const viewsRoot = path.join(__dirname, '../views');
 const publicRoot = path.join(__dirname, '../public');
 const angularDist = path.join(workspaceRoot, 'dist/apps/angular-app/browser');
+const bannerRemoteDist = path.join(workspaceRoot, 'dist/apps/banner/browser');
 
 const port = Number(process.env.PORT ?? 4200);
 const app = express();
@@ -16,10 +17,15 @@ app.set('view engine', 'ejs');
 app.set('views', viewsRoot);
 
 app.use('/cms-assets', express.static(publicRoot));
+app.use('/remotes/banner', express.static(bannerRemoteDist));
+
+function remotesReady() {
+  return fs.existsSync(path.join(bannerRemoteDist, 'remoteEntry.json'));
+}
 
 function readAngularAssets() {
   const indexPath = path.join(angularDist, 'index.html');
-  if (!fs.existsSync(indexPath)) {
+  if (!fs.existsSync(indexPath) || !remotesReady()) {
     return { ready: false, head: '', scripts: '' };
   }
 
