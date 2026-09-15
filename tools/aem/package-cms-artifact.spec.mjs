@@ -31,7 +31,7 @@ describe('packageCmsArtifact', () => {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   });
 
-  it('zips browser files, AEM includes, and clientlib resources without concatenating JS', async () => {
+  it('creates one clientlib per hashed chunk and sibling proxy includes', async () => {
     const browserDir = path.join(tempRoot, 'browser');
     const outDir = path.join(tempRoot, 'out');
     fs.mkdirSync(browserDir, { recursive: true });
@@ -51,34 +51,42 @@ describe('packageCmsArtifact', () => {
     });
 
     assert.equal(fs.existsSync(result.zipPath), true);
-    assert.equal(fs.existsSync(path.join(outDir, 'browser', 'main-bbb222.js')), true);
-    assert.equal(
-      fs.existsSync(path.join(outDir, 'browser', 'chunk-banner-def456.js')),
-      true,
+    assert.match(
+      fs.readFileSync(path.join(outDir, 'includes/body.html'), 'utf8'),
+      /\/etc\.clientlibs\/mysite\/clientlibs\/main-bbb222\.js/,
     );
 
-    const head = fs.readFileSync(path.join(outDir, 'includes/head.html'), 'utf8');
-    const body = fs.readFileSync(path.join(outDir, 'includes/body.html'), 'utf8');
-    const manifest = JSON.parse(
-      fs.readFileSync(path.join(outDir, 'manifest.json'), 'utf8'),
+    const clientlibsRoot = path.join(outDir, 'jcr_root/apps/mysite/clientlibs');
+    const mainJsTxt = fs.readFileSync(
+      path.join(clientlibsRoot, 'main-bbb222/js.txt'),
+      'utf8',
     );
-    assert.match(head, /styles-abc123\.css/);
-    assert.match(body, /main-bbb222\.js/);
-    assert.equal(manifest.files.scripts[0].src, 'main-bbb222.js');
-
-    const clientlibDir = path.join(
-      outDir,
-      'jcr_root/apps/mysite/clientlibs/clientlib-angular',
+    const chunkJsTxt = fs.readFileSync(
+      path.join(clientlibsRoot, 'chunk-banner-def456/js.txt'),
+      'utf8',
     );
+    assert.match(mainJsTxt, /main-bbb222\.js/);
+    assert.equal(mainJsTxt.includes('chunk-banner-def456.js'), false);
+    assert.match(chunkJsTxt, /chunk-banner-def456\.js/);
     assert.equal(
-      fs.existsSync(path.join(clientlibDir, 'resources/main-bbb222.js')),
+      fs.existsSync(path.join(clientlibsRoot, 'styles-abc123/css.txt')),
       true,
     );
     assert.equal(
-      fs.existsSync(path.join(clientlibDir, 'resources/chunk-banner-def456.js')),
+      fs.existsSync(
+        path.join(clientlibsRoot, 'clientlib-angular-resources/resources/favicon.ico'),
+      ),
       true,
     );
-    assert.equal(fs.existsSync(path.join(clientlibDir, 'js.txt')), false);
-    assert.equal(fs.existsSync(path.join(clientlibDir, 'js')), false);
+    assert.equal(fs.existsSync(path.join(outDir, 'scripts/create-clientlib-libs.mjs')), true);
+    assert.deepEqual(
+      result.libs.map((lib) => lib.name).sort(),
+      [
+        'chunk-banner-def456',
+        'clientlib-angular-resources',
+        'main-bbb222',
+        'styles-abc123',
+      ],
+    );
   });
 });

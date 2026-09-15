@@ -1,11 +1,11 @@
 /**
  * Parse the Angular application-builder index.html and rewrite asset URLs
- * so AEM page templates can load the same files from a clientlib proxy path.
+ * so AEM page templates can load entry files from the clientlib proxy.
  *
- * Lazy ngx-element chunks are loaded relative to the entry script URL, so the
- * rewritten script src must point at the clientlib resources folder and the
- * chunk files must be copied as sibling resources — never concatenated into
- * js.txt.
+ * Each hashed JS/CSS file becomes its own clientlib named after the file
+ * basename. Loading `main-HASH.js` from
+ * `/etc.clientlibs/<appId>/clientlibs/main-HASH.js` lets ESM
+ * `import('./chunk-HASH.js')` resolve to the sibling chunk clientlib.
  */
 
 const LINK_RE = /<link\b[^>]*>/gi;
@@ -30,13 +30,12 @@ export function readAttr(tag, name) {
   return match ? match[1] : null;
 }
 
-export function clientlibResourceBase(config) {
+export function clientlibProxyBase(config) {
   const appId = config.appId.replace(/^\/+|\/+$/g, '');
-  const clientlibName = config.clientlibName.replace(/^\/+|\/+$/g, '');
-  return `/etc.clientlibs/${appId}/clientlibs/${clientlibName}/resources`;
+  return `/etc.clientlibs/${appId}/clientlibs`;
 }
 
-export function rewriteUrl(url, resourceBase) {
+export function rewriteUrl(url, proxyBase) {
   if (!url) {
     return url;
   }
@@ -49,18 +48,18 @@ export function rewriteUrl(url, resourceBase) {
   ) {
     return url;
   }
-  const normalizedBase = resourceBase.replace(/\/+$/, '');
+  const normalizedBase = proxyBase.replace(/\/+$/, '');
   if (url === normalizedBase || url.startsWith(`${normalizedBase}/`)) {
     return url;
   }
-  const relative = url.replace(/^\.\//, '').replace(/^\/+/, '');
-  return `${normalizedBase}/${relative}`;
+  const filename = url.replace(/^\.\//, '').replace(/^\/+/, '').split('/').pop();
+  return `${normalizedBase}/${filename}`;
 }
 
-export function rewriteTagUrls(tag, resourceBase) {
+export function rewriteTagUrls(tag, proxyBase) {
   return tag.replace(
     /(href|src)=["']([^"']+)["']/gi,
-    (_full, attr, url) => `${attr}="${rewriteUrl(url, resourceBase)}"`,
+    (_full, attr, url) => `${attr}="${rewriteUrl(url, proxyBase)}"`,
   );
 }
 
@@ -78,7 +77,7 @@ export function uniqueBy(items, keyFn) {
   return unique;
 }
 
-export function buildAemIncludes(html, resourceBase) {
+export function buildAemIncludes(html, proxyBase) {
   const { links, scripts } = parseAngularIndexHtml(html);
   const styles = uniqueBy(links.filter(isStylesheet), (tag) => readAttr(tag, 'href'));
   const preloads = uniqueBy(
@@ -86,10 +85,10 @@ export function buildAemIncludes(html, resourceBase) {
     (tag) => readAttr(tag, 'href'),
   );
   const head = [...styles, ...preloads]
-    .map((tag) => rewriteTagUrls(tag, resourceBase))
+    .map((tag) => rewriteTagUrls(tag, proxyBase))
     .join('\n');
   const body = scripts
-    .map((tag) => rewriteTagUrls(tag, resourceBase))
+    .map((tag) => rewriteTagUrls(tag, proxyBase))
     .join('\n');
   return { head, body };
 }
@@ -98,21 +97,25 @@ export function buildManifest({
   name,
   version,
   gitSha,
-  resourceBase,
+  proxyBase,
   config,
   html,
+  libs = [],
 }) {
   const { links, scripts } = parseAngularIndexHtml(html);
   return {
     name,
     version,
     gitSha,
-    resourceBase,
+    proxyBase,
     clientlib: {
-      name: config.clientlibName,
-      categories: config.categories,
+      categoryPrefix: config.categoryPrefix,
       allowProxy: config.allowProxy,
       jcrRootAppsPath: config.jcrRootAppsPath,
+      libs: libs.map((lib) => ({
+        name: lib.name,
+        categories: lib.categories,
+      })),
     },
     files: {
       styles: uniqueBy(

@@ -84,7 +84,7 @@ npx nx test shared-store
 
 AEM Maven integration: [tools/aem/README.md](tools/aem/README.md). The
 `ui.frontend` module should unpack `dist/cms/angular-app-<version>.zip` and
-run `aem-clientlib-generator`; it should not compile this Angular app.
+run the shipped per-chunk clientlib scanner; it should not compile this Angular app.
 
 Adding a feature later: create another buildable library, expose an NgModule
 with `customElementComponent`, add a secondary entry on `elements`, and append

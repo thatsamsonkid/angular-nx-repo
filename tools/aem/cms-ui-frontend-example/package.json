@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "clientlib": "clientlib --verbose"
+    "clientlib": "node target/angular-app/scripts/generate-and-run-clientlibs.mjs --browser target/angular-app/browser --config target/angular-app/aem.config.json --out ../ui.apps/src/main/content/jcr_root/apps/mysite/clientlibs"
   },
   "devDependencies": {
     "aem-clientlib-generator": "2.0.3"

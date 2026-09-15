@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 import {
   buildAemIncludes,
   buildManifest,
-  clientlibResourceBase,
+  clientlibProxyBase,
   parseAngularIndexHtml,
   rewriteUrl,
 } from './extract-angular-assets.mjs';
@@ -26,8 +26,7 @@ const sampleHtml = `<!doctype html>
 
 const config = {
   appId: 'mysite',
-  clientlibName: 'clientlib-angular',
-  categories: ['mysite.angular'],
+  categoryPrefix: 'mysite.angular',
   allowProxy: true,
   jcrRootAppsPath: 'apps/mysite/clientlibs',
 };
@@ -40,40 +39,40 @@ describe('extract-angular-assets', () => {
     assert.match(scripts[1], /main-bbb222\.js/);
   });
 
-  it('builds the AEM clientlib proxy resource base', () => {
+  it('builds the AEM clientlib proxy directory', () => {
     assert.equal(
-      clientlibResourceBase(config),
-      '/etc.clientlibs/mysite/clientlibs/clientlib-angular/resources',
+      clientlibProxyBase(config),
+      '/etc.clientlibs/mysite/clientlibs',
     );
   });
 
-  it('rewrites relative hashed files onto the clientlib resources path', () => {
-    const resourceBase = clientlibResourceBase(config);
+  it('rewrites hashed files to sibling clientlib proxy URLs', () => {
+    const proxyBase = clientlibProxyBase(config);
     assert.equal(
-      rewriteUrl('main-bbb222.js', resourceBase),
-      '/etc.clientlibs/mysite/clientlibs/clientlib-angular/resources/main-bbb222.js',
+      rewriteUrl('main-bbb222.js', proxyBase),
+      '/etc.clientlibs/mysite/clientlibs/main-bbb222.js',
     );
     assert.equal(
-      rewriteUrl('/styles-abc123.css', resourceBase),
-      '/etc.clientlibs/mysite/clientlibs/clientlib-angular/resources/styles-abc123.css',
+      rewriteUrl('/styles-abc123.css', proxyBase),
+      '/etc.clientlibs/mysite/clientlibs/styles-abc123.css',
     );
   });
 
   it('omits favicon from AEM head includes and rewrites entry assets', () => {
-    const resourceBase = clientlibResourceBase(config);
-    const includes = buildAemIncludes(sampleHtml, resourceBase);
+    const proxyBase = clientlibProxyBase(config);
+    const includes = buildAemIncludes(sampleHtml, proxyBase);
     assert.equal(includes.head.includes('favicon.ico'), false);
     assert.match(
       includes.head,
-      /\/etc\.clientlibs\/mysite\/clientlibs\/clientlib-angular\/resources\/styles-abc123\.css/,
+      /\/etc\.clientlibs\/mysite\/clientlibs\/styles-abc123\.css/,
     );
     assert.match(
       includes.head,
-      /chunk-banner-def456\.js/,
+      /\/etc\.clientlibs\/mysite\/clientlibs\/chunk-banner-def456\.js/,
     );
     assert.match(
       includes.body,
-      /\/etc\.clientlibs\/mysite\/clientlibs\/clientlib-angular\/resources\/main-bbb222\.js/,
+      /\/etc\.clientlibs\/mysite\/clientlibs\/main-bbb222\.js/,
     );
   });
 
@@ -86,8 +85,8 @@ describe('extract-angular-assets', () => {
       <link rel="modulepreload" href="chunk-banner-def456.js">
       <script src="main-bbb222.js" type="module"></script>
     </body>`;
-    const resourceBase = clientlibResourceBase(config);
-    const includes = buildAemIncludes(html, resourceBase);
+    const proxyBase = clientlibProxyBase(config);
+    const includes = buildAemIncludes(html, proxyBase);
     const stylesheetCount = includes.head.split('rel="stylesheet"').length - 1;
     assert.equal(stylesheetCount, 1);
     assert.match(includes.head, /media="print"/);
@@ -96,25 +95,28 @@ describe('extract-angular-assets', () => {
       name: 'angular-app',
       version: '0.0.0',
       gitSha: 'abc',
-      resourceBase,
+      proxyBase,
       config,
       html,
     });
     assert.deepEqual(manifest.files.styles, ['styles-abc123.css']);
   });
 
-  it('records hashed files in the Maven-facing manifest', () => {
+  it('records hashed files and generated clientlibs in the manifest', () => {
     const manifest = buildManifest({
       name: 'angular-app',
       version: '0.0.0',
       gitSha: 'abc',
-      resourceBase: clientlibResourceBase(config),
+      proxyBase: clientlibProxyBase(config),
       config,
       html: sampleHtml,
+      libs: [
+        { name: 'main-bbb222', categories: ['mysite.angular.main-bbb222'] },
+      ],
     });
     assert.deepEqual(manifest.files.styles, ['styles-abc123.css']);
     assert.deepEqual(manifest.files.modulepreload, ['chunk-banner-def456.js']);
     assert.equal(manifest.files.scripts[1].src, 'main-bbb222.js');
-    assert.equal(manifest.clientlib.categories[0], 'mysite.angular');
+    assert.equal(manifest.clientlib.libs[0].name, 'main-bbb222');
   });
 });

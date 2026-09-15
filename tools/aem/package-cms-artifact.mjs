@@ -2,15 +2,24 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import clientlib from 'aem-clientlib-generator';
+import { buildClientlibLibs, serializeClientlibLibs } from './create-clientlib-libs.mjs';
 import {
   buildAemIncludes,
   buildManifest,
-  clientlibResourceBase,
+  clientlibProxyBase,
 } from './extract-angular-assets.mjs';
+import { generateClientlibs } from './generate-and-run-clientlibs.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(__dirname, '../..');
+
+const SCRIPT_FILES = [
+  'aem.config.json',
+  'clientlib.template.mjs',
+  'create-clientlib-libs.mjs',
+  'extract-angular-assets.mjs',
+  'generate-and-run-clientlibs.mjs',
+];
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -54,49 +63,6 @@ function zipDirectory(sourceDir, zipPath) {
   }
 }
 
-function generateClientlibs({ config, browserDir, clientlibsRoot }) {
-  fs.mkdirSync(clientlibsRoot, { recursive: true });
-  const previousCwd = process.cwd();
-
-  return new Promise((resolve, reject) => {
-    clientlib(
-      {
-        name: config.clientlibName,
-        categories: config.categories,
-        allowProxy: config.allowProxy,
-        serializationFormat: config.serializationFormat,
-        assets: {
-          // Keep hashed lazy chunks as individual files. Putting them in
-          // `js` writes js.txt and AEM concatenates the bundle, which
-          // breaks ngx-element loadChildren.
-          resources: {
-            cwd: browserDir,
-            flatten: false,
-            files: ['**/*'],
-            ignore: ['index.html'],
-          },
-        },
-      },
-      {
-        cwd: workspaceRoot,
-        clientLibRoot: clientlibsRoot,
-        verbose: true,
-      },
-      (error) => {
-        process.chdir(previousCwd);
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve();
-      },
-    );
-  }).catch((error) => {
-    process.chdir(previousCwd);
-    throw error;
-  });
-}
-
 export async function packageCmsArtifact(options = {}) {
   const configPath = options.configPath ?? path.join(__dirname, 'aem.config.json');
   const browserDir =
@@ -118,28 +84,39 @@ export async function packageCmsArtifact(options = {}) {
   fs.mkdirSync(outDir, { recursive: true });
 
   const html = fs.readFileSync(path.join(browserDir, 'index.html'), 'utf8');
-  const resourceBase = clientlibResourceBase(config);
-  const includes = buildAemIncludes(html, resourceBase);
+  const proxyBase = clientlibProxyBase(config);
+  const libs = buildClientlibLibs(browserDir, config);
+  const includes = buildAemIncludes(html, proxyBase);
   const manifest = buildManifest({
     name: 'angular-app',
     version: packageJson.version,
     gitSha: gitSha(),
-    resourceBase,
+    proxyBase,
     config,
     html,
+    libs,
   });
 
   const browserOut = path.join(outDir, 'browser');
   const includesOut = path.join(outDir, 'includes');
+  const scriptsOut = path.join(outDir, 'scripts');
   copyDir(browserDir, browserOut);
   fs.mkdirSync(includesOut, { recursive: true });
+  fs.mkdirSync(scriptsOut, { recursive: true });
   fs.writeFileSync(path.join(includesOut, 'head.html'), `${includes.head}\n`);
   fs.writeFileSync(path.join(includesOut, 'body.html'), `${includes.body}\n`);
   fs.writeFileSync(
     path.join(outDir, 'manifest.json'),
     `${JSON.stringify(manifest, null, 2)}\n`,
   );
+  fs.writeFileSync(
+    path.join(outDir, 'clientlibs.json'),
+    `${JSON.stringify(serializeClientlibLibs(libs, browserDir), null, 2)}\n`,
+  );
   fs.copyFileSync(configPath, path.join(outDir, 'aem.config.json'));
+  for (const filename of SCRIPT_FILES) {
+    fs.copyFileSync(path.join(__dirname, filename), path.join(scriptsOut, filename));
+  }
 
   if (!skipClientlib) {
     const clientlibsRoot = path.join(
@@ -162,7 +139,8 @@ export async function packageCmsArtifact(options = {}) {
     outDir,
     zipPath,
     manifest,
-    resourceBase,
+    proxyBase,
+    libs,
   };
 }
 
@@ -175,7 +153,8 @@ if (isMain) {
     .then((result) => {
       console.log(`CMS artifact directory: ${result.outDir}`);
       console.log(`CMS artifact zip: ${result.zipPath}`);
-      console.log(`Clientlib resource base: ${result.resourceBase}`);
+      console.log(`Clientlib proxy base: ${result.proxyBase}`);
+      console.log(`Generated clientlibs: ${result.libs.map((lib) => lib.name).join(', ')}`);
     })
     .catch((error) => {
       console.error(error);
