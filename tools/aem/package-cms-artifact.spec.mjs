@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -31,7 +32,7 @@ describe('packageCmsArtifact', () => {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   });
 
-  it('creates one clientlib per hashed chunk and sibling proxy includes', async () => {
+  it('zips a flat clientlib drop-in that Maven can unpack over a cleaned folder', async () => {
     const browserDir = path.join(tempRoot, 'browser');
     const outDir = path.join(tempRoot, 'out');
     fs.mkdirSync(browserDir, { recursive: true });
@@ -52,41 +53,32 @@ describe('packageCmsArtifact', () => {
 
     assert.equal(fs.existsSync(result.zipPath), true);
     assert.match(
-      fs.readFileSync(path.join(outDir, 'includes/body.html'), 'utf8'),
-      /\/etc\.clientlibs\/mysite\/clientlibs\/main-bbb222\.js/,
+      fs.readFileSync(path.join(result.dropinDir, 'includes/body.html'), 'utf8'),
+      /\/etc\.clientlibs\/mysite\/clientlibs\/angular-app\/main-bbb222\.js/,
     );
 
-    const clientlibsRoot = path.join(outDir, 'jcr_root/apps/mysite/clientlibs');
     const mainJsTxt = fs.readFileSync(
-      path.join(clientlibsRoot, 'main-bbb222/js.txt'),
-      'utf8',
-    );
-    const chunkJsTxt = fs.readFileSync(
-      path.join(clientlibsRoot, 'chunk-banner-def456/js.txt'),
+      path.join(result.dropinDir, 'main-bbb222/js.txt'),
       'utf8',
     );
     assert.match(mainJsTxt, /main-bbb222\.js/);
     assert.equal(mainJsTxt.includes('chunk-banner-def456.js'), false);
-    assert.match(chunkJsTxt, /chunk-banner-def456\.js/);
+    assert.equal(fs.existsSync(path.join(result.dropinDir, 'browser')), false);
+
+    const unpacked = path.join(tempRoot, 'ui.apps-clientlibs/angular-app');
+    fs.mkdirSync(unpacked, { recursive: true });
+    execFileSync('python3', [
+      '-c',
+      'import shutil, sys; shutil.unpack_archive(sys.argv[1], sys.argv[2])',
+      result.zipPath,
+      unpacked,
+    ]);
+    assert.equal(fs.existsSync(path.join(unpacked, 'main-bbb222/js.txt')), true);
     assert.equal(
-      fs.existsSync(path.join(clientlibsRoot, 'styles-abc123/css.txt')),
+      fs.existsSync(path.join(unpacked, 'chunk-banner-def456/js.txt')),
       true,
     );
-    assert.equal(
-      fs.existsSync(
-        path.join(clientlibsRoot, 'clientlib-angular-resources/resources/favicon.ico'),
-      ),
-      true,
-    );
-    assert.equal(fs.existsSync(path.join(outDir, 'scripts/create-clientlib-libs.mjs')), true);
-    assert.deepEqual(
-      result.libs.map((lib) => lib.name).sort(),
-      [
-        'chunk-banner-def456',
-        'clientlib-angular-resources',
-        'main-bbb222',
-        'styles-abc123',
-      ],
-    );
+    assert.equal(fs.existsSync(path.join(unpacked, 'includes/head.html')), true);
+    assert.equal(fs.existsSync(path.join(unpacked, 'browser')), false);
   });
 });

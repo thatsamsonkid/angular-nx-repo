@@ -13,14 +13,6 @@ import { generateClientlibs } from './generate-and-run-clientlibs.mjs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = path.resolve(__dirname, '../..');
 
-const SCRIPT_FILES = [
-  'aem.config.json',
-  'clientlib.template.mjs',
-  'create-clientlib-libs.mjs',
-  'extract-angular-assets.mjs',
-  'generate-and-run-clientlibs.mjs',
-];
-
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
@@ -34,10 +26,6 @@ function gitSha() {
     return null;
   }
   return result.stdout.trim();
-}
-
-function copyDir(from, to) {
-  fs.cpSync(from, to, { recursive: true });
 }
 
 function zipDirectory(sourceDir, zipPath) {
@@ -97,46 +85,36 @@ export async function packageCmsArtifact(options = {}) {
     libs,
   });
 
-  const browserOut = path.join(outDir, 'browser');
-  const includesOut = path.join(outDir, 'includes');
-  const scriptsOut = path.join(outDir, 'scripts');
-  copyDir(browserDir, browserOut);
+  const dropinDir = path.join(outDir, 'dropin');
+  const includesOut = path.join(dropinDir, 'includes');
   fs.mkdirSync(includesOut, { recursive: true });
-  fs.mkdirSync(scriptsOut, { recursive: true });
   fs.writeFileSync(path.join(includesOut, 'head.html'), `${includes.head}\n`);
   fs.writeFileSync(path.join(includesOut, 'body.html'), `${includes.body}\n`);
   fs.writeFileSync(
-    path.join(outDir, 'manifest.json'),
+    path.join(dropinDir, 'manifest.json'),
     `${JSON.stringify(manifest, null, 2)}\n`,
   );
   fs.writeFileSync(
-    path.join(outDir, 'clientlibs.json'),
+    path.join(dropinDir, 'clientlibs.json'),
     `${JSON.stringify(serializeClientlibLibs(libs, browserDir), null, 2)}\n`,
   );
-  fs.copyFileSync(configPath, path.join(outDir, 'aem.config.json'));
-  for (const filename of SCRIPT_FILES) {
-    fs.copyFileSync(path.join(__dirname, filename), path.join(scriptsOut, filename));
-  }
+  fs.copyFileSync(configPath, path.join(dropinDir, 'aem.config.json'));
 
   if (!skipClientlib) {
-    const clientlibsRoot = path.join(
-      outDir,
-      'jcr_root',
-      config.jcrRootAppsPath,
-    );
     await generateClientlibs({
       config,
       browserDir,
-      clientlibsRoot,
+      clientlibsRoot: dropinDir,
     });
   }
 
   const zipName = `angular-app-${packageJson.version}.zip`;
   const zipPath = path.join(path.dirname(outDir), zipName);
-  zipDirectory(outDir, zipPath);
+  zipDirectory(dropinDir, zipPath);
 
   return {
     outDir,
+    dropinDir,
     zipPath,
     manifest,
     proxyBase,

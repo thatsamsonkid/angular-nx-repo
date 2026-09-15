@@ -4,7 +4,7 @@
  *
  * Each hashed JS/CSS file becomes its own clientlib named after the file
  * basename. Loading `main-HASH.js` from
- * `/etc.clientlibs/<appId>/clientlibs/main-HASH.js` lets ESM
+ * `/etc.clientlibs/<appId>/clientlibs/<folder>/main-HASH.js` lets ESM
  * `import('./chunk-HASH.js')` resolve to the sibling chunk clientlib.
  */
 
@@ -32,7 +32,10 @@ export function readAttr(tag, name) {
 
 export function clientlibProxyBase(config) {
   const appId = config.appId.replace(/^\/+|\/+$/g, '');
-  return `/etc.clientlibs/${appId}/clientlibs`;
+  const folder = (config.clientlibsFolder ?? '').replace(/^\/+|\/+$/g, '');
+  return folder
+    ? `/etc.clientlibs/${appId}/clientlibs/${folder}`
+    : `/etc.clientlibs/${appId}/clientlibs`;
 }
 
 export function rewriteUrl(url, proxyBase) {
@@ -112,6 +115,7 @@ export function buildManifest({
       categoryPrefix: config.categoryPrefix,
       allowProxy: config.allowProxy,
       jcrRootAppsPath: config.jcrRootAppsPath,
+      clientlibsFolder: config.clientlibsFolder,
       libs: libs.map((lib) => ({
         name: lib.name,
         categories: lib.categories,

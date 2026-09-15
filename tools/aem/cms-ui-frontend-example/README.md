@@ -1,22 +1,20 @@
-# CMS `ui.frontend` example
+# CMS drop-in example
 
-Copy these files into the AEM Maven `ui.frontend` module after the Angular
-app has been removed from that repository. They assume:
+Copy this POM pattern into the AEM Maven project after the Angular app has
+been removed. It assumes:
 
-- this module sits next to `ui.apps`
 - Nexus (or `mvn install-file`) hosts `io.github.thatsamsonkid:angular-app:zip`
-- `frontend-maven-plugin` only unpacks that zip and runs the shipped
-  clientlib scanner — it does not compile Angular
+- generated Angular clientlibs live in a dedicated folder
+  `ui.apps/.../clientlibs/angular-app`
+- Maven only deletes that folder and unpacks the zip into it
 
-The zip includes `scripts/generate-and-run-clientlibs.mjs`. That is the same
-template-plus-dist-walk used in this Nx repo: one clientlib per hashed JS/CSS
-file, named after the file basename so AEM proxy URLs stay sibling to
-`import('./chunk-….js')`.
+No Node, no `frontend-maven-plugin`, no `aem-clientlib-generator` on the
+CMS side. The zip root is already the flat clientlib folders plus
+`includes/`.
 
 Replace `mysite`, `groupId`, and `angular-app.version` with the real AEM
 project values.
 
-The page component should include the unpacked `includes/head.html` in
-the document head and `includes/body.html` after `window.__CMS_STATE__`.
-Do not `cq:includeClientLib` every chunk clientlib — that concatenates
-them. Load `main-*.js` as a module from the proxy URL in `body.html`.
+The page component can include
+`/apps/mysite/clientlibs/angular-app/includes/head.html` and `body.html`
+after `window.__CMS_STATE__`. Do not `cq:includeClientLib` every chunk.

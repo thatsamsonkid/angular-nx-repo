@@ -6,5 +6,6 @@
   "serializationFormat": "xml",
   "jsProcessor": ["default:none", "min:none"],
   "cssProcessor": ["default:none", "min:none"],
-  "jcrRootAppsPath": "apps/mysite/clientlibs"
+  "jcrRootAppsPath": "apps/mysite/clientlibs",
+  "clientlibsFolder": "angular-app"
 }

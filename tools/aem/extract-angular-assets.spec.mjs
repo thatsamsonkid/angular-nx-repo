@@ -29,6 +29,7 @@ const config = {
   categoryPrefix: 'mysite.angular',
   allowProxy: true,
   jcrRootAppsPath: 'apps/mysite/clientlibs',
+  clientlibsFolder: 'angular-app',
 };
 
 describe('extract-angular-assets', () => {
@@ -42,7 +43,7 @@ describe('extract-angular-assets', () => {
   it('builds the AEM clientlib proxy directory', () => {
     assert.equal(
       clientlibProxyBase(config),
-      '/etc.clientlibs/mysite/clientlibs',
+      '/etc.clientlibs/mysite/clientlibs/angular-app',
     );
   });
 
@@ -50,11 +51,11 @@ describe('extract-angular-assets', () => {
     const proxyBase = clientlibProxyBase(config);
     assert.equal(
       rewriteUrl('main-bbb222.js', proxyBase),
-      '/etc.clientlibs/mysite/clientlibs/main-bbb222.js',
+      '/etc.clientlibs/mysite/clientlibs/angular-app/main-bbb222.js',
     );
     assert.equal(
       rewriteUrl('/styles-abc123.css', proxyBase),
-      '/etc.clientlibs/mysite/clientlibs/styles-abc123.css',
+      '/etc.clientlibs/mysite/clientlibs/angular-app/styles-abc123.css',
     );
   });
 
@@ -64,15 +65,15 @@ describe('extract-angular-assets', () => {
     assert.equal(includes.head.includes('favicon.ico'), false);
     assert.match(
       includes.head,
-      /\/etc\.clientlibs\/mysite\/clientlibs\/styles-abc123\.css/,
+      /\/etc\.clientlibs\/mysite\/clientlibs\/angular-app\/styles-abc123\.css/,
     );
     assert.match(
       includes.head,
-      /\/etc\.clientlibs\/mysite\/clientlibs\/chunk-banner-def456\.js/,
+      /\/etc\.clientlibs\/mysite\/clientlibs\/angular-app\/chunk-banner-def456\.js/,
     );
     assert.match(
       includes.body,
-      /\/etc\.clientlibs\/mysite\/clientlibs\/main-bbb222\.js/,
+      /\/etc\.clientlibs\/mysite\/clientlibs\/angular-app\/main-bbb222\.js/,
     );
   });
 

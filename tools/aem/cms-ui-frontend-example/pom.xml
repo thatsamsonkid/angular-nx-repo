@@ -4,9 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <!--
-    Example ui.frontend module for the AEM Maven project.
-    It does not compile Angular. It unpacks a versioned zip from this Nx
-    repo and runs aem-clientlib-generator against the browser dist.
+    Example module for the AEM Maven project.
+    It does not compile Angular and does not run Node.
+    It deletes the generated Angular clientlibs folder and unpacks the
+    versioned zip from this Nx repo into that same location.
   -->
   <groupId>com.example.cms</groupId>
   <artifactId>ui.frontend</artifactId>
@@ -17,9 +18,7 @@
     <angular-app.groupId>io.github.thatsamsonkid</angular-app.groupId>
     <angular-app.artifactId>angular-app</angular-app.artifactId>
     <angular-app.version>0.0.0</angular-app.version>
-    <node.version>v22.14.0</node.version>
-    <npm.version>10.9.2</npm.version>
-    <clientlib.destination>${project.basedir}/../ui.apps/src/main/content/jcr_root/apps/mysite/clientlibs</clientlib.destination>
+    <clientlib.destination>${project.basedir}/../ui.apps/src/main/content/jcr_root/apps/mysite/clientlibs/angular-app</clientlib.destination>
   </properties>
 
   <dependencies>
@@ -33,6 +32,29 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <id>clean-angular-clientlibs</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <configuration>
+              <excludeDefaultDirectories>true</excludeDefaultDirectories>
+              <filesets>
+                <fileset>
+                  <directory>${clientlib.destination}</directory>
+                </fileset>
+              </filesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -51,72 +73,9 @@
                   <artifactId>${angular-app.artifactId}</artifactId>
                   <version>${angular-app.version}</version>
                   <type>zip</type>
-                  <outputDirectory>${project.build.directory}/angular-app</outputDirectory>
+                  <outputDirectory>${clientlib.destination}</outputDirectory>
                 </artifactItem>
               </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.3.1</version>
-        <executions>
-          <execution>
-            <id>copy-angular-includes</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.basedir}/../ui.apps/src/main/content/jcr_root/apps/mysite/components/page/angular-app</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}/angular-app/includes</directory>
-                  <includes>
-                    <include>head.html</include>
-                    <include>body.html</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.15.4</version>
-        <executions>
-          <execution>
-            <id>install node and npm</id>
-            <goals>
-              <goal>install-node-and-npm</goal>
-            </goals>
-            <configuration>
-              <nodeVersion>${node.version}</nodeVersion>
-              <npmVersion>${npm.version}</npmVersion>
-            </configuration>
-          </execution>
-          <execution>
-            <id>npm install</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <arguments>ci</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>generate clientlibs</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <arguments>run clientlib</arguments>
             </configuration>
           </execution>
         </executions>

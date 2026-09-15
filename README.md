@@ -83,8 +83,9 @@ npx nx test shared-store
 ```
 
 AEM Maven integration: [tools/aem/README.md](tools/aem/README.md). The
-`ui.frontend` module should unpack `dist/cms/angular-app-<version>.zip` and
-run the shipped per-chunk clientlib scanner; it should not compile this Angular app.
+CMS Maven module should delete `.../clientlibs/angular-app` and unpack
+`dist/cms/angular-app-<version>.zip` there. It should not compile this
+Angular app or run Node.
 
 Adding a feature later: create another buildable library, expose an NgModule
 with `customElementComponent`, add a secondary entry on `elements`, and append
