@@ -6,7 +6,8 @@
     "serve": "nx serve cms-host",
     "serve:app": "nx serve angular-app",
     "build": "nx run-many -t build",
-    "test": "nx run-many -t test --exclude=angular-app-e2e"
+    "test": "nx run-many -t test --exclude=angular-app-e2e",
+    "package:cms": "nx run aem-packaging:package"
   },
   "private": true,
   "dependencies": {
@@ -40,6 +41,7 @@
     "@nx/playwright": "23.2.1",
     "@nx/web": "23.2.1",
     "@nx/workspace": "23.2.1",
+    "aem-clientlib-generator": "2.0.3",
     "@playwright/test": "^1.37.0",
     "@schematics/angular": "~22.1.0",
     "@swc/helpers": "~0.5.18",

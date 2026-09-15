@@ -1,0 +1,11 @@
+{
+  "name": "ui.frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clientlib": "clientlib --verbose"
+  },
+  "devDependencies": {
+    "aem-clientlib-generator": "2.0.3"
+  }
+}

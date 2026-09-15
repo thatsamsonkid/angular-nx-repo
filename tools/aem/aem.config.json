@@ -1,0 +1,8 @@
+{
+  "appId": "mysite",
+  "clientlibName": "clientlib-angular",
+  "categories": ["mysite.angular"],
+  "allowProxy": true,
+  "serializationFormat": "xml",
+  "jcrRootAppsPath": "apps/mysite/clientlibs"
+}
