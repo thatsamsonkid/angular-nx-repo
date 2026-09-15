@@ -26,7 +26,9 @@ CMS / EJS page
 | `libs/shared/store` | Buildable | Shared NgRx store (page context + auth session). |
 
 The production CMS lives in another repository. `cms-host` only mimics how that
-system would emit pages.
+system would emit pages. AEM should consume a versioned Angular **build
+artifact** from this repo (see [tools/aem/README.md](tools/aem/README.md)),
+not a mirrored copy of the Angular sources.
 
 ## ngx-element
 
@@ -73,11 +75,17 @@ into that same storage so the next document load can restore the slice.
 ```sh
 npm run serve          # EJS CMS host + watched Angular bundle (port 4200)
 npm run serve:app      # Angular-only fallback (port 4300)
+npm run package:cms    # Production Angular dist + AEM clientlib zip
 npx nx build elements  # Build the publishable aggregator
 npx nx test feature-banner
 npx nx test feature-gallery
 npx nx test shared-store
 ```
+
+AEM Maven integration: [tools/aem/README.md](tools/aem/README.md). The
+CMS Maven module should delete `.../clientlibs/angular-app` and unpack
+`dist/cms/angular-app-<version>.zip` there. It should not compile this
+Angular app or run Node.
 
 Adding a feature later: create another buildable library, expose an NgModule
 with `customElementComponent`, add a secondary entry on `elements`, and append

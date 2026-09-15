@@ -1,0 +1,11 @@
+{
+  "appId": "mysite",
+  "categoryPrefix": "mysite.angular",
+  "resourcesClientlibName": "clientlib-angular-resources",
+  "allowProxy": true,
+  "serializationFormat": "xml",
+  "jsProcessor": ["default:none", "min:none"],
+  "cssProcessor": ["default:none", "min:none"],
+  "jcrRootAppsPath": "apps/mysite/clientlibs",
+  "clientlibsFolder": "angular-app"
+}

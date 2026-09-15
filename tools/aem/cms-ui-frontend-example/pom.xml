@@ -1,0 +1,85 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    Example module for the AEM Maven project.
+    It does not compile Angular and does not run Node.
+    It deletes the generated Angular clientlibs folder and unpacks the
+    versioned zip from this Nx repo into that same location.
+  -->
+  <groupId>com.example.cms</groupId>
+  <artifactId>ui.frontend</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <angular-app.groupId>io.github.thatsamsonkid</angular-app.groupId>
+    <angular-app.artifactId>angular-app</angular-app.artifactId>
+    <angular-app.version>0.0.0</angular-app.version>
+    <clientlib.destination>${project.basedir}/../ui.apps/src/main/content/jcr_root/apps/mysite/clientlibs/angular-app</clientlib.destination>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>${angular-app.groupId}</groupId>
+      <artifactId>${angular-app.artifactId}</artifactId>
+      <version>${angular-app.version}</version>
+      <type>zip</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <id>clean-angular-clientlibs</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <configuration>
+              <excludeDefaultDirectories>true</excludeDefaultDirectories>
+              <filesets>
+                <fileset>
+                  <directory>${clientlib.destination}</directory>
+                </fileset>
+              </filesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.8.1</version>
+        <executions>
+          <execution>
+            <id>unpack-angular-app</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${angular-app.groupId}</groupId>
+                  <artifactId>${angular-app.artifactId}</artifactId>
+                  <version>${angular-app.version}</version>
+                  <type>zip</type>
+                  <outputDirectory>${clientlib.destination}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

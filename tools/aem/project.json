@@ -1,0 +1,29 @@
+{
+  "name": "aem-packaging",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "tools/aem",
+  "projectType": "library",
+  "tags": ["type:tool", "scope:cms"],
+  "implicitDependencies": ["angular-app"],
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node --test tools/aem/*.spec.mjs"
+      }
+    },
+    "package": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["angular-app"],
+          "target": "build"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/dist/cms"],
+      "options": {
+        "command": "node tools/aem/package-cms-artifact.mjs"
+      }
+    }
+  }
+}
