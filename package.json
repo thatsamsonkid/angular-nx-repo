@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "nx serve cms-host",
     "serve:app": "nx serve angular-app",
+    "serve:button": "nx serve button-element",
     "build": "nx run-many -t build",
     "test": "nx run-many -t test --exclude=angular-app-e2e",
     "package:cms": "nx run aem-packaging:package"

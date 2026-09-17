@@ -14,6 +14,11 @@ CMS / EJS page
                     ├── feature-banner        (buildable only)
                     ├── feature-gallery       (buildable only)
                     └── shared-store          (buildable only, NgRx)
+
+Non-CMS host / script tag
+  └── <ui-button label="Save draft">
+        └── button-element bootstrap
+              └── @angular-nx-repo/ui/button  (secondary entry, Angular Elements)
 ```
 
 | Project | Kind | Role |
@@ -24,6 +29,8 @@ CMS / EJS page
 | `libs/features/banner` | Buildable | Banner feature + `BannerElementModule.customElementComponent`. |
 | `libs/features/gallery` | Buildable | Gallery feature + `GalleryElementModule.customElementComponent`. |
 | `libs/shared/store` | Buildable | Shared NgRx store (page context + auth session). |
+| `libs/ui` | Publishable | Example UI kit. Widgets live on secondary entries (`@angular-nx-repo/ui/button`). |
+| `apps/button-element` | Angular Elements app | Registers only `<ui-button>` and ships a drop-in script bundle. |
 
 The production CMS lives in another repository. `cms-host` only mimics how that
 system would emit pages. AEM should consume a versioned Angular **build
@@ -75,11 +82,14 @@ into that same storage so the next document load can restore the slice.
 ```sh
 npm run serve          # EJS CMS host + watched Angular bundle (port 4200)
 npm run serve:app      # Angular-only fallback (port 4300)
+npm run serve:button   # Standalone <ui-button> web component demo (port 4400)
 npm run package:cms    # Production Angular dist + AEM clientlib zip
 npx nx build elements  # Build the publishable aggregator
+npx nx build ui        # Build the UI kit, including the /button secondary entry
 npx nx test feature-banner
 npx nx test feature-gallery
 npx nx test shared-store
+npx nx test ui
 ```
 
 AEM Maven integration: [tools/aem/README.md](tools/aem/README.md). The
@@ -90,3 +100,22 @@ Angular app or run Node.
 Adding a feature later: create another buildable library, expose an NgModule
 with `customElementComponent`, add a secondary entry on `elements`, and append
 one row to `elementLazyConfig`. The Angular app does not change.
+
+## Export one secondary-entry widget as a web component
+
+`libs/ui/button` is a stand-in for a design-system widget that lives entirely
+on a secondary path (`@angular-nx-repo/ui/button`). The same `Button` class
+is exposed two ways:
+
+| Delivery | Command | Consumer |
+| --- | --- | --- |
+| Publishable library | `npx nx build ui` | `import { defineUiButton } from '@angular-nx-repo/ui/button'` — Angular hosts call this (optionally with `{ injector }`) and then use `<ui-button>`. |
+| Application bundle | `npx nx serve button-element` | Non-Angular pages load the `browser` scripts. Angular is bundled; the page only uses the custom element. |
+
+`defineUiButton()` uses Angular Elements (`createCustomElement`) and registers
+the tag once. `@Input() label` becomes a property/attribute; `@Output() pressed`
+becomes a `pressed` CustomEvent whose `detail` is `{ label }`.
+
+This is separate from the CMS `ngx-element` loader. Banner and gallery stay
+lazy Angular components inside `<ngx-element>`. The button example is a real
+custom element that can ship by itself.

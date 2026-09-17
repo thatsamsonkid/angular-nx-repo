@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ui-button web component</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <main class="demo">
+      <p class="demo__kicker">Secondary entry → web component</p>
+      <h1>Export <code>@angular-nx-repo/ui/button</code> as <code>&lt;ui-button&gt;</code></h1>
+      <p class="demo__lede">
+        The widget lives only on the library secondary path. This application
+        calls <code>defineUiButton()</code> and registers a real custom
+        element. Any host can then set <code>label</code> and listen for
+        <code>pressed</code>.
+      </p>
+
+      <section class="demo__panel">
+        <label class="demo__field">
+          Label input
+          <input data-demo="label" type="text" value="Save draft" />
+        </label>
+        <label class="demo__field demo__field--inline">
+          <input data-demo="disabled" type="checkbox" />
+          Disabled
+        </label>
+        <ui-button label="Save draft"></ui-button>
+      </section>
+
+      <section class="demo__log-panel">
+        <h2>Output log</h2>
+        <p class="demo__hint">
+          Clicks dispatch a bubbling <code>pressed</code> CustomEvent. The
+          event detail is the current label payload.
+        </p>
+        <div data-demo="log" class="demo__log"></div>
+      </section>
+    </main>
+  </body>
+</html>
