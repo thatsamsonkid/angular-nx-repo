@@ -1,0 +1,26 @@
+:host {
+  display: inline-block;
+}
+
+.ui-button {
+  appearance: none;
+  margin: 0;
+  padding: 0.7rem 1.15rem;
+  border: 0;
+  border-radius: 999px;
+  background: #f4b942;
+  color: #143c5c;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+
+.ui-button:hover:not(:disabled) {
+  background: #f7c45d;
+}
+
+.ui-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

@@ -1,0 +1,10 @@
+{
+  "name": "@angular-nx-repo/ui",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "^22.1.0",
+    "@angular/elements": "^22.1.0",
+    "@angular/platform-browser": "^22.1.0"
+  },
+  "sideEffects": false
+}

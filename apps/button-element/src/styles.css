@@ -1,0 +1,98 @@
+:root {
+  color: #143c5c;
+  background: #f4f7fa;
+  font-family:
+    Inter,
+    Segoe UI,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+.demo {
+  box-sizing: border-box;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+}
+
+.demo__kicker {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1f6f8b;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  line-height: 1.2;
+}
+
+.demo__lede,
+.demo__hint {
+  margin: 0 0 1.5rem;
+  line-height: 1.55;
+  color: #3d5870;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.92em;
+}
+
+.demo__panel,
+.demo__log-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem 1.35rem;
+  border-radius: 1.1rem;
+  background: #fff;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+}
+
+.demo__log-panel {
+  margin-top: 1.25rem;
+}
+
+.demo__log-panel h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.demo__field {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.demo__field--inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.demo__field input[type='text'] {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #c5d4e0;
+  border-radius: 0.6rem;
+  font: inherit;
+}
+
+.demo__log {
+  min-height: 2.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+}
+
+.demo__log p {
+  margin: 0 0 0.35rem;
+}

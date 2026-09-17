@@ -29,6 +29,8 @@
       "@angular-nx-repo/elements/gallery": [
         "./libs/elements/gallery/src/index.ts"
       ],
+      "@angular-nx-repo/ui": ["./libs/ui/src/index.ts"],
+      "@angular-nx-repo/ui/button": ["./libs/ui/button/src/index.ts"],
       "ngx-el": ["./node_modules/ngx-el/src/public-api.ts"]
     }
   },
