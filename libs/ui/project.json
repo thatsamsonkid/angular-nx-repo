@@ -1,7 +1,7 @@
 {
   "name": "ui",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/ui/src",
+  "sourceRoot": "libs/ui",
   "prefix": "ui",
   "projectType": "library",
   "release": {

@@ -1,4 +1,8 @@
-import { UI_BUTTON_TAG, defineUiButton } from './define-button-element';
+import {
+  UI_BUTTON_TAG,
+  defineUiButton,
+  whenUiButtonStable,
+} from './define-button-element';
 import type { UiButtonElement } from './define-button-element';
 
 async function whenButtonReady(host: UiButtonElement): Promise<HTMLButtonElement> {
@@ -16,6 +20,25 @@ async function whenButtonReady(host: UiButtonElement): Promise<HTMLButtonElement
   throw new Error('ui-button did not render its inner button');
 }
 
+async function whenLabel(
+  host: UiButtonElement,
+  label: string,
+): Promise<HTMLButtonElement> {
+  const inner = await whenButtonReady(host);
+  const deadline = Date.now() + 2000;
+
+  while (Date.now() < deadline) {
+    if (inner.textContent?.includes(label)) {
+      return inner;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+
+  throw new Error(
+    `ui-button label did not update to "${label}": ${inner.textContent ?? ''}`,
+  );
+}
+
 describe('defineUiButton', () => {
   let host: UiButtonElement;
 
@@ -23,6 +46,7 @@ describe('defineUiButton', () => {
     await defineUiButton();
     host = document.createElement(UI_BUTTON_TAG) as UiButtonElement;
     document.body.appendChild(host);
+    await whenButtonReady(host);
   });
 
   afterEach(() => {
@@ -36,13 +60,15 @@ describe('defineUiButton', () => {
 
   it('reflects the label input onto the rendered button', async () => {
     host.label = 'Publish';
-    const inner = await whenButtonReady(host);
+    await whenUiButtonStable();
+    const inner = await whenLabel(host, 'Publish');
     expect(inner.textContent).toContain('Publish');
   });
 
   it('dispatches a pressed CustomEvent with the label payload', async () => {
     host.label = 'Save draft';
-    const inner = await whenButtonReady(host);
+    await whenUiButtonStable();
+    const inner = await whenLabel(host, 'Save draft');
     const emissions: unknown[] = [];
 
     host.addEventListener('pressed', (event) => {

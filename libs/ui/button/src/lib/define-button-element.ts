@@ -1,4 +1,5 @@
 import {
+  ApplicationRef,
   Injector,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
@@ -24,6 +25,7 @@ export type UiButtonElement = HTMLElement & {
 };
 
 let registration: Promise<void> | undefined;
+let elementApp: ApplicationRef | undefined;
 
 /**
  * Registers `<ui-button>` from this secondary entry only. Other widgets in
@@ -40,19 +42,25 @@ export function defineUiButton(
   return registration;
 }
 
+/** Flushes the standalone element application created when no injector was passed. */
+export async function whenUiButtonStable(): Promise<void> {
+  await elementApp?.whenStable();
+}
+
 async function registerUiButton(
   options: DefineUiButtonOptions,
 ): Promise<void> {
-  const injector =
-    options.injector ??
-    (
-      await createApplication({
-        providers: [
-          provideBrowserGlobalErrorListeners(),
-          provideZonelessChangeDetection(),
-        ],
-      })
-    ).injector;
+  let injector = options.injector;
+
+  if (!injector) {
+    elementApp = await createApplication({
+      providers: [
+        provideBrowserGlobalErrorListeners(),
+        provideZonelessChangeDetection(),
+      ],
+    });
+    injector = elementApp.injector;
+  }
 
   const element = createCustomElement(Button, { injector });
   customElements.define(UI_BUTTON_TAG, element);

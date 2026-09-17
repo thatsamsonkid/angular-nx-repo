@@ -1,4 +1,4 @@
-import { UI_PACKAGE } from './lib/ui-package';
+import { UI_PACKAGE } from './ui-package';
 
 describe('ui package', () => {
   it('identifies the publishable package name', () => {
