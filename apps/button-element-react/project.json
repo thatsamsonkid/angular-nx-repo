@@ -1,0 +1,57 @@
+{
+  "name": "button-element-react",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/button-element-react/src",
+  "tags": ["type:app", "scope:button"],
+  "implicitDependencies": ["button-element"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/apps/button-element-react"],
+      "dependsOn": [
+        {
+          "projects": ["button-element"],
+          "target": "build"
+        }
+      ],
+      "options": {
+        "command": "node apps/button-element-react/copy-bundle.mjs && npx vite build --config apps/button-element-react/vite.config.mts",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["button-element"],
+          "target": "build"
+        }
+      ],
+      "options": {
+        "command": "node apps/button-element-react/copy-bundle.mjs && npx vite --config apps/button-element-react/vite.config.mts",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "npx vite preview --config apps/button-element-react/vite.config.mts --port 4501",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --config apps/button-element-react/vite.config.mts",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  }
+}

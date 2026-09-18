@@ -32,3 +32,7 @@ await defineUiButton();
   });
 </script>
 ```
+
+A React host can load the same `button-element` browser bundle and wrap the
+tag so JSX sets properties and listens for `pressed`. See
+`apps/button-element-react`.
