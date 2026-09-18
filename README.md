@@ -19,18 +19,24 @@ Non-CMS host / script tag
   └── <ui-button label="Save draft">
         └── button-element bootstrap
               └── @angular-nx-repo/ui/button  (secondary entry, Angular Elements)
+
+React host
+  └── <UiButton label="Save draft" onPressed={...}>
+        └── <ui-button> custom element
+              └── button-element browser bundle
 ```
 
-| Project | Kind | Role |
-| --- | --- | --- |
-| `apps/cms-host` | Express + EJS | Local stand-in for the external CMS. Renders multi-page views and places `<ngx-element>` tags. |
-| `apps/angular-app` | Angular host | Bootstraps ngx-element and the global store. No router, no page components. |
-| `libs/elements` | Publishable | Only package the host consumes. Re-exports features, lazy config, and store registration. |
-| `libs/features/banner` | Buildable | Banner feature + `BannerElementModule.customElementComponent`. |
-| `libs/features/gallery` | Buildable | Gallery feature + `GalleryElementModule.customElementComponent`. |
-| `libs/shared/store` | Buildable | Shared NgRx store (page context + auth session). |
-| `libs/ui` | Publishable | Example UI kit. Widgets live on secondary entries (`@angular-nx-repo/ui/button`). |
-| `apps/button-element` | Angular Elements app | Registers only `<ui-button>` and ships a drop-in script bundle. |
+| Project                     | Kind                 | Role                                                                                           |
+| --------------------------- | -------------------- | ---------------------------------------------------------------------------------------------- |
+| `apps/cms-host`             | Express + EJS        | Local stand-in for the external CMS. Renders multi-page views and places `<ngx-element>` tags. |
+| `apps/angular-app`          | Angular host         | Bootstraps ngx-element and the global store. No router, no page components.                    |
+| `libs/elements`             | Publishable          | Only package the host consumes. Re-exports features, lazy config, and store registration.      |
+| `libs/features/banner`      | Buildable            | Banner feature + `BannerElementModule.customElementComponent`.                                 |
+| `libs/features/gallery`     | Buildable            | Gallery feature + `GalleryElementModule.customElementComponent`.                               |
+| `libs/shared/store`         | Buildable            | Shared NgRx store (page context + auth session).                                               |
+| `libs/ui`                   | Publishable          | Example UI kit. Widgets live on secondary entries (`@angular-nx-repo/ui/button`).              |
+| `apps/button-element`       | Angular Elements app | Registers only `<ui-button>` and ships a drop-in script bundle.                                |
+| `apps/button-element-react` | React + Vite demo    | Shows how a React host loads that bundle, sets properties, and listens for `pressed`.          |
 
 The production CMS lives in another repository. `cms-host` only mimics how that
 system would emit pages. AEM should consume a versioned Angular **build
@@ -83,6 +89,7 @@ into that same storage so the next document load can restore the slice.
 npm run serve          # EJS CMS host + watched Angular bundle (port 4200)
 npm run serve:app      # Angular-only fallback (port 4300)
 npm run serve:button   # Standalone <ui-button> web component demo (port 4400)
+npm run serve:button-react  # React host demo for the same <ui-button> (port 4500)
 npm run package:cms    # Production Angular dist + AEM clientlib zip
 npx nx build elements  # Build the publishable aggregator
 npx nx build ui        # Build the UI kit, including the /button secondary entry
@@ -105,12 +112,14 @@ one row to `elementLazyConfig`. The Angular app does not change.
 
 `libs/ui/button` is a stand-in for a design-system widget that lives entirely
 on a secondary path (`@angular-nx-repo/ui/button`). The same `Button` class
-is exposed two ways:
+is exposed as a publishable Angular import and as a drop-in custom-element
+bundle. `button-element-react` shows how a React page consumes that bundle:
 
-| Delivery | Command | Consumer |
-| --- | --- | --- |
-| Publishable library | `npx nx build ui` | `import { defineUiButton } from '@angular-nx-repo/ui/button'` — Angular hosts call this (optionally with `{ injector }`) and then use `<ui-button>`. |
-| Application bundle | `npx nx serve button-element` | Non-Angular pages load the `browser` scripts. Angular is bundled; the page only uses the custom element. |
+| Delivery            | Command                             | Consumer                                                                                                                                             |
+| ------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Publishable library | `npx nx build ui`                   | `import { defineUiButton } from '@angular-nx-repo/ui/button'` — Angular hosts call this (optionally with `{ injector }`) and then use `<ui-button>`. |
+| Application bundle  | `npx nx serve button-element`       | Non-Angular pages load the `browser` scripts. Angular is bundled; the page only uses the custom element.                                             |
+| React host demo     | `npx nx serve button-element-react` | A Vite React app loads those same `browser` scripts, then wraps `<ui-button>` so JSX can set properties and handle `pressed`.                        |
 
 `defineUiButton()` uses Angular Elements (`createCustomElement`) and registers
 the tag once. `@Input() label` becomes a property/attribute; `@Output() pressed`

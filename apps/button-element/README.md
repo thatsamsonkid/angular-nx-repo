@@ -6,8 +6,9 @@ calls `defineUiButton()` from `@angular-nx-repo/ui/button`, then this page
 uses `<ui-button>` like any other custom element.
 
 ```sh
-npx nx serve button-element   # http://localhost:4400
-npx nx build button-element   # dist/apps/button-element/browser
+npx nx serve button-element         # http://localhost:4400
+npx nx build button-element         # dist/apps/button-element/browser
+npx nx serve button-element-react   # React host demo, http://localhost:4500
 ```
 
 Production hashing is off so a CMS can load stable script filenames from

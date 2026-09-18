@@ -6,6 +6,7 @@
     "serve": "nx serve cms-host",
     "serve:app": "nx serve angular-app",
     "serve:button": "nx serve button-element",
+    "serve:button-react": "nx serve button-element-react",
     "build": "nx run-many -t build",
     "test": "nx run-many -t test --exclude=angular-app-e2e",
     "package:cms": "nx run aem-packaging:package"
@@ -24,6 +25,8 @@
     "ejs": "^6.0.1",
     "express": "^5.2.1",
     "ngx-el": "^22.0.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "rxjs": "~7.8.0"
   },
   "devDependencies": {
@@ -42,13 +45,18 @@
     "@nx/playwright": "23.2.1",
     "@nx/web": "23.2.1",
     "@nx/workspace": "23.2.1",
-    "aem-clientlib-generator": "2.0.3",
     "@playwright/test": "^1.37.0",
     "@schematics/angular": "~22.1.0",
     "@swc/helpers": "~0.5.18",
+    "@testing-library/react": "^16.3.3",
     "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.6",
+    "@types/node": "^26.6.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@typescript-eslint/utils": "^8.58.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "aem-clientlib-generator": "2.0.3",
     "angular-eslint": "^22.1.0",
     "autoprefixer": "^10.4.0",
     "eslint": "^9.8.0",
@@ -64,6 +72,7 @@
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.58.0",
     "verdaccio": "^6.3.2",
+    "vite": "^8.3.0",
     "vitest": "^4.0.8"
   },
   "nx": {
